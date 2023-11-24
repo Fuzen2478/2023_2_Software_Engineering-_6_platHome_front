@@ -2,7 +2,7 @@
 import Header from "../_component/Header";
 import { useState } from "react";
 import SideBar from "../_component/SideBar";
-import Chat from "../_component/Chat";
+import Chat from "../_component/chat/Chat";
 
 export default function Home() {
   const [sideFold, setSideFold] = useState(false);

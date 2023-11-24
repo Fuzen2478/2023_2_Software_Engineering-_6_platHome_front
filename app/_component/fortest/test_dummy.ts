@@ -1,4 +1,4 @@
-import { IChatRoom } from "../Chat_env";
+import { IChatRoom } from "../chat/Chat_env";
 
 export interface IUser {
   userId: number;
