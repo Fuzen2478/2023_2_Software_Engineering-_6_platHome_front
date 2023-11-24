@@ -1,7 +1,7 @@
 import { MoreHorizontal, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { IChatRoom } from "./Chat_env";
-import { TestChatRoom, TestUser } from "../fortest/test_dummy";
+import { TestChatRoom, TestUser } from "./fortest/test_dummy";
 import { Socket } from "socket.io";
 
 function ChatDropDown({ open }: { open: boolean }) {

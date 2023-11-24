@@ -1,8 +1,8 @@
 "use client";
-import Header from "./_component/Header";
+import Header from "../_component/Header";
 import { useState } from "react";
-import SideBar from "./_component/SideBar";
-import Chat from "./_component/Chat";
+import SideBar from "../_component/SideBar";
+import Chat from "../_component/Chat";
 
 export default function Home() {
   const [sideFold, setSideFold] = useState(false);
