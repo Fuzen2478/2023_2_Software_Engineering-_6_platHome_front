@@ -1,28 +1,20 @@
-"use client";
-
 import "@/app/globals.css";
-import Header from "../_component/Header";
+import Header from "../component/Header";
 import { useState } from "react";
-import SideBar from "../_component/SideBar";
-import Chat from "../_component/chat/Chat";
+// import SideBar from "../_component/SideBar";
+// import { Chat } from "../_component/chat/Chat";
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const [sideFold, setSideFold] = useState(false);
-
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <body className="flex flex-col">
-        <SideBar isFold={sideFold} setFold={setSideFold} />
-        <main>{children}</main>
+      <div className="flex flex-col">
+        {/* <SideBar isFold={sideFold} setFold={setSideFold} /> */}
+        {children}
         <div className="chatting-container fixed bottom-0 right-0">
-          <Chat />
+          {/* <Chat /> */}
         </div>
-      </body>
+      </div>
     </div>
   );
 }

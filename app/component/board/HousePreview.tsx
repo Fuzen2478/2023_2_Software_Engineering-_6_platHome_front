@@ -1,3 +1,4 @@
+"use client";
 import { houseInfoType } from "../fortest/house";
 import Image from "next/image";
 import Link from "next/link";

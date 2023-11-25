@@ -1,6 +1,6 @@
 "use client";
 
-import { house_test_data } from "@/app/_component/fortest/house";
+import { house_test_data } from "@/app/component/fortest/house";
 import HousePreview from "./HousePreview";
 
 export default function BoardList() {

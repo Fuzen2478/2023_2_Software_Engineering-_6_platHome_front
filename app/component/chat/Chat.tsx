@@ -5,14 +5,6 @@ import { IChatRoom } from "./Chat_env";
 import { TestChatRoom, TestUser } from "../fortest/test_dummy";
 import { io } from "socket.io-client";
 
-const socket = io("http://49.162.4.3:4000");
-
-function receiveMessage() {
-  socket.on("message", (data) => {
-    console.log(data);
-  });
-}
-
 function ChatDropDown({ open }: { open: boolean }) {
   return (
     <div
@@ -99,14 +91,14 @@ function ChatRoom({
   );
 }
 
-export default function Chat() {
+export function Chat() {
   const [chatList, setChatList] = useState<IChatRoom[]>();
   const [chatOpen, setChatOpen] = useState<boolean[]>([true]);
 
-  setInterval(() => receiveMessage(), 1000);
+  // console.log("sibal : ", TestChatRoom);
 
   useEffect(() => {
-    setChatList(TestChatRoom.filter((item) => item.fromId === 0));
+    setChatList(TestChatRoom.filter((item) => item.fromId === 1));
   }, []);
 
   useEffect(() => {

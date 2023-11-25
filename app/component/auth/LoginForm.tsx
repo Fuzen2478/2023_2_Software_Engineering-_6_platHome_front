@@ -3,12 +3,9 @@
 // LoginForm.tsx
 import { useState } from "react";
 import axios from "axios";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 function LoginForm() {
-  const router = useRouter();
-
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
 
@@ -26,7 +23,6 @@ function LoginForm() {
       .then((response) => {
         console.log(response.data);
 
-        router.push("/");
         // 로그인 성공 처리
       })
       .catch((error) => {

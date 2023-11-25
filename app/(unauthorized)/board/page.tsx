@@ -1,6 +1,7 @@
-import BoardInfo from "@/app/_component/board/BoardInfo";
-import BoardList from "@/app/_component/board/BoardList";
-import Search from "@/app/_component/board/Search";
+"use client";
+import BoardInfo from "@/app/component/board/BoardInfo";
+import BoardList from "@/app/component/board/BoardList";
+import Search from "@/app/component/board/Search";
 
 export default function Board() {
   return (

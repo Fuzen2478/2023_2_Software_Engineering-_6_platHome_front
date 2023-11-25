@@ -1,11 +1,8 @@
-'use client';
+"use client";
 //PreSignUp.tsx
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState } from "react";
 //import { data } from '../assets/forSignUp.ts';
 function PreSignUp() {
-  const router = useRouter();
-
   const [isChecked1, setIsChecked1] = useState(false);
   const [isChecked2, setIsChecked2] = useState(false);
 
@@ -19,22 +16,21 @@ function PreSignUp() {
 
   const goToSignUp = () => {
     if (!isChecked1 || !isChecked2) {
-      alert('필수 사항이 아직 동의되지 않았습니다.');
+      alert("필수 사항이 아직 동의되지 않았습니다.");
     } else {
-      router.push('/signup');
     }
   };
 
   return (
     <div>
-      <div className='relative'>
-        <div className='my-36 w-auto px-5'>
-          <p className='pb-10 text-center text-3xl font-bold text-blue-600'>
+      <div className="relative">
+        <div className="my-36 w-auto px-5">
+          <p className="pb-10 text-center text-3xl font-bold text-blue-600">
             회원가입
           </p>
-          <div className='mb-10'>
-            <div className='text-s mb-3'>이용약관</div>
-            <div className='container m-2 h-24 w-full overflow-y-scroll p-2 text-xs font-bold '>
+          <div className="mb-10">
+            <div className="text-s mb-3">이용약관</div>
+            <div className="container m-2 h-24 w-full overflow-y-scroll p-2 text-xs font-bold ">
               이용약관
               <br /> <br />
               <br />
@@ -489,21 +485,21 @@ function PreSignUp() {
               부칙
               <br />본 약관은 2020년 4월 5일부터 시행됩니다.
             </div>
-            <div className='form-control'>
-              <label className='label cursor-pointer'>
+            <div className="form-control">
+              <label className="label cursor-pointer">
                 <input
-                  type='checkbox'
+                  type="checkbox"
                   checked={isChecked1}
                   onChange={handleCheckboxChange1}
-                  className='checkbox'
+                  className="checkbox"
                 />
-                <span className='label-text ml-4 flex-1'>
+                <span className="label-text ml-4 flex-1">
                   [필수] 이용약관을 확인했으며 약관에 동의합니다
                 </span>
               </label>
             </div>
-            <div className='text-s mb-3 mt-6'>개인정보처리방침</div>
-            <div className='container m-2 h-24 w-full overflow-y-scroll p-2 text-xs font-bold '>
+            <div className="text-s mb-3 mt-6">개인정보처리방침</div>
+            <div className="container m-2 h-24 w-full overflow-y-scroll p-2 text-xs font-bold ">
               [아주대학교 총학생회] ('www.ajouchong.com'이하 '총학생회')는
               개인정보보호법에 따라 이용자의 개인정보 보호 및 권익을 보호하고
               개인정보와 관련한 이용자의 고충을 원활하게 처리할 수 있도록 다음과
@@ -731,22 +727,22 @@ function PreSignUp() {
               조치를 하고 있으며 침입차단시스템을 이용하여 외부로부터의 무단
               접근을 통제하고 있습니다.
             </div>
-            <div className='form-control'>
-              <label className='label cursor-pointer'>
+            <div className="form-control">
+              <label className="label cursor-pointer">
                 <input
-                  type='checkbox'
+                  type="checkbox"
                   checked={isChecked2}
                   onChange={handleCheckboxChange2}
-                  className='checkbox'
+                  className="checkbox"
                 />
-                <span className='label-text ml-4 flex-1'>
+                <span className="label-text ml-4 flex-1">
                   [필수] 개인정보처리방침을 확인했으며 개인정보 수집 및 이용에
                   동의합니다
                 </span>
               </label>
             </div>
-            <div className='mb-5 flex justify-end'>
-              <button onClick={goToSignUp} className='btn'>
+            <div className="mb-5 flex justify-end">
+              <button onClick={goToSignUp} className="btn">
                 다음
               </button>
             </div>
