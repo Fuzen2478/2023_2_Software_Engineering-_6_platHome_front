@@ -1,8 +1,17 @@
+"use client";
 import { MoreHorizontal, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { IChatRoom } from "./Chat_env";
 import { TestChatRoom, TestUser } from "../fortest/test_dummy";
-import { Socket } from "socket.io";
+import { io } from "socket.io-client";
+
+const socket = io("http://49.162.4.3:4000");
+
+function receiveMessage() {
+  socket.on("message", (data) => {
+    console.log(data);
+  });
+}
 
 function ChatDropDown({ open }: { open: boolean }) {
   return (
@@ -94,12 +103,15 @@ export default function Chat() {
   const [chatList, setChatList] = useState<IChatRoom[]>();
   const [chatOpen, setChatOpen] = useState<boolean[]>([true]);
 
+  setInterval(() => receiveMessage(), 1000);
+
   useEffect(() => {
-    setChatList(TestChatRoom.filter((item) => item.fromId === 1));
+    setChatList(TestChatRoom.filter((item) => item.fromId === 0));
   }, []);
 
   useEffect(() => {
     setChatOpen(Array(chatList?.length).fill(false));
+    console.log("chatList : ", chatList);
   }, [chatList]); //init ChatOpen
 
   function handleChatOpen(index: number) {
@@ -109,8 +121,6 @@ export default function Chat() {
       return temp;
     });
   }
-
-  //   const socket = new Socket("172.21.35.124")
 
   return (
     <div className="flex gap-x-2">
