@@ -20,6 +20,7 @@ function CreateRoom() {
     roomId: '0',
   });
 }
+
 function logOut() {
   return axios
     .get('http://49.162.4.3:8080/api/jwt/auth/logout', {
