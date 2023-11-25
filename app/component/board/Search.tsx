@@ -2,15 +2,26 @@
 
 import { useState } from 'react';
 import { BiSearchAlt } from 'react-icons/bi';
+import { houseInfoType } from '@/app/_model/house';
 
-export default function Search() {
+interface SearchProps {
+  data: houseInfoType[];
+}
+const Search = ({ data }: SearchProps) => {
   const [word, setWord] = useState<string>('');
 
   const search = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (word.length === 0) return;
     //TODO: word를 이용해 검색하기 구현
-    alert(`검색어: ${word}`);
+    const filteredData = data.filter(
+      (house) => house.id.toString() === word.toString()
+    );
+    if (filteredData.length === 0) {
+      alert(`검색어: ${word}`);
+    } else {
+      console.log(filteredData);
+    }
     setWord('');
   };
 
@@ -28,4 +39,5 @@ export default function Search() {
       </button>
     </form>
   );
-}
+};
+export default Search;

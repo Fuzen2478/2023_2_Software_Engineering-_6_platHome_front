@@ -1,7 +1,7 @@
 'use client';
 // SignUp.tsx
 
-import { useState } from 'react';
+import { use, useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 
@@ -9,29 +9,26 @@ function SignUp() {
   const [id, setId] = useState('');
   const [num, setVerifyNum] = useState('');
   const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
   const [passwordCheck, setPwck] = useState('');
   const [isEqual, setIsEqual] = useState(false);
   const [isValid, setIsValid] = useState(false);
   const router = useRouter();
 
   function postSignUpData() {
-    console.log(id, num, password, username);
+    console.log(id, num, password);
     return axios
       .post(
-        'http://49.162.4.3:8080/api/jwt/no-auth/sign-up',
+        'http://49.162.4.3:8080/members/signup/',
         {
           userId: id,
-          authCode: num,
-          username,
+          verificationCode: num,
           password,
         },
         { withCredentials: true }
       )
       .then((response) => {
         console.log(response.data);
-        //window.location.href = '/login';
-        router.replace('/login');
+        router.push('/login');
         // 회원가입 성공 처리
       })
       .catch((error) => {
@@ -41,38 +38,65 @@ function SignUp() {
       });
   }
 
+  // function postEmailCert() {
+  //   return axios
+  //     .post(
+  //       'http://49.162.4.3:8080/api/email/no-auth/send-email',
+  //       {
+  //         userId: id,
+  //       }
+  //       //{ withCredentials: true }
+  //     )
+  //     .then((response) => {
+  //       return axios
+  //         .post('http://49.162.4.3:8080/api/email/no-auth/send-email', {
+  //           userId: id,
+  //         })
+  //         .then((response) => {
+  //           alert('입력하신 이메일로 인증번호가 전송되었습니다.');
+  //           console.log(response.data);
+  //           // 이메일 인증 성공 처리
+  //         })
+  //         .catch((error) => {
+  //           alert('인증코드 전송에 실패하였습니다.');
+  //           console.error(error);
+  //           // 이메일 인증 실패 처리
+  //         });
+  //     })
+  //     .catch((error) => {
+  //       alert('이미 가입된 이메일입니다.');
+  //       console.error(error);
+  //       console.log('123');
+  //       // 이메일 인증 실패 처리
+  //     });
+  // }
+
   function postEmailCert() {
+    console.log('hi');
     return axios
       .post('http://49.162.4.3:8080/api/email/no-auth/send-email', {
         userId: id,
       })
       .then((response) => {
-        return axios
-          .post('http://49.162.4.3:8080/api/email/no-auth/send-email', {
-            userId: id,
-          })
-          .then((response) => {
-            alert('입력하신 이메일로 인증번호가 전송되었습니다.');
-            console.log(response.data);
-            setId('');
-            // 이메일 인증 성공 처리
-          })
-          .catch((error) => {
-            alert('인증코드 전송에 실패하였습니다.');
-            console.error(error);
-            // 이메일 인증 실패 처리
-          });
+        alert('입력하신 이메일로 인증번호가 전송되었습니다.');
+        console.log(response);
+        //console.log(response.data);
+        // 이메일 인증 성공 처리
       })
       .catch((error) => {
-        alert('이미 가입된 이메일입니다.');
+        if (error.response.status === 409) {
+          alert('이미 가입된 이메일입니다.');
+        } else {
+          alert('인증코드 전송에 실패하였습니다.');
+        }
         console.error(error);
-        console.log('123');
         // 이메일 인증 실패 처리
       });
   }
 
   const SignFunc = (e: { preventDefault: () => void }) => {
     e.preventDefault();
+    postSignUpData();
   };
 
   const validatePassword = (password: any) => {
@@ -130,7 +154,13 @@ function SignUp() {
                       value={id}
                       onChange={(event) => setId(event.target.value)}
                     />
-                    <button className='btn' onClick={postEmailCert}>
+                    <button
+                      className='btn'
+                      onClick={(event) => {
+                        event.preventDefault();
+                        postEmailCert();
+                      }}
+                    >
                       인증
                     </button>
                   </label>
@@ -148,7 +178,7 @@ function SignUp() {
                   <input
                     type='text'
                     placeholder='인증번호'
-                    className='input input-bordered  text-black '
+                    className='input input-bordered '
                     value={num}
                     onChange={(event) => setVerifyNum(event.target.value)}
                   />
@@ -158,22 +188,6 @@ function SignUp() {
                       입력한 이메일로 전송된 인증번호를 정확하게 입력해주세요.
                     </span>
                   </label>
-                </div>
-
-                <div className='mb-6'>
-                  <div className='box-border pb-3'>
-                    <label htmlFor='email'>* 유저네임</label>
-                  </div>
-                  <div className='auto container box-border'>
-                    <div className='container relative rounded-sm border border-gray-300'>
-                      <input
-                        type='text'
-                        value={username}
-                        onChange={(event) => setUsername(event.target.value)}
-                        className='text-m relative inline-flex w-full p-1 text-black'
-                      />
-                    </div>
-                  </div>
                 </div>
 
                 <div className='mb-5'>
@@ -186,7 +200,7 @@ function SignUp() {
                         type='password'
                         value={password}
                         onChange={passwordChange}
-                        className='text-m relative inline-flex w-full p-1 bg-black'
+                        className='text-m relative inline-flex w-full p-1'
                       />
                     </div>
                   </div>
@@ -211,7 +225,7 @@ function SignUp() {
                       <input
                         type='password'
                         onChange={(event) => checkPassword(event.target.value)}
-                        className='text-m relative inline-flex w-full p-1 bg-black'
+                        className='text-m relative inline-flex w-full p-1'
                       />
                     </div>
                   </div>
@@ -230,7 +244,7 @@ function SignUp() {
                 <div className='mb-5 align-top'>
                   <button
                     type='submit'
-                    onClick={postSignUpData}
+                    onSubmit={postSignUpData}
                     className='btn w-full'
                   >
                     가입
