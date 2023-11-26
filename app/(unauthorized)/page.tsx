@@ -1,29 +1,29 @@
-'use client';
+"use client";
 
-import axios from 'axios';
-import { useEffect } from 'react';
-import { io } from 'socket.io-client';
-import { useRouter } from 'next/navigation';
-import { newAccessToken } from '../component/auth/LoginForm';
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { io } from "socket.io-client";
+import { useRouter } from "next/navigation";
+import { newAccessToken } from "../component/auth/LoginForm";
 
-const socket = io('http://49.162.4.3:4000');
+const socket = io("http://49.162.4.3:4000");
 
 function logOut() {
   return axios
-    .get('http://49.162.4.3:8080/api/jwt/auth/logout', {
+    .get("http://49.162.4.3:8080/api/jwt/auth/logout", {
       headers: {
-        'x-access-token': `${newAccessToken}`,
+        "x-access-token": `${newAccessToken}`,
       },
     })
     .then((response) => {
       console.log(response.headers);
 
-      console.log('로그아웃 되었습니다.');
+      console.log("로그아웃 되었습니다.");
       // router.push('/');
       // 로그아웃 성공 처리
     })
     .catch((error) => {
-      alert('로그아웃에 실패했습니다.');
+      alert("로그아웃에 실패했습니다.");
       console.error(error);
       // 로그아웃 실패 처리
     });
@@ -103,7 +103,6 @@ export default function Home() {
   }, []);
   const router = useRouter();
 
-
   const [image, setImage] = useState(null);
 
   const onChangeImage = (e) => {
@@ -120,34 +119,21 @@ export default function Home() {
   return (
     <div className="main-content">
       메인콘텐츠
-      <div
-        className="button h-32 w-32 bg-red-400 flex justify-center items-center"
-        onClick={() => Connect()}
-      >
+      <div className="button h-32 w-32 bg-red-400 flex justify-center items-center" onClick={() => Connect()}>
         연결버튼
       </div>
-      <div
-        className="button h-32 w-32 bg-blue-400 flex justify-center items-center"
-        onClick={() => CreateRoom()}
-      >
+      <div className="button h-32 w-32 bg-blue-400 flex justify-center items-center" onClick={() => CreateRoom()}>
         입장버튼
       </div>
-      <div
-        className="button h-32 w-32 bg-white flex justify-center items-center"
-        onClick={() => SendMessage()}
-      >
+      <div className="button h-32 w-32 bg-white flex justify-center items-center" onClick={() => SendMessage()}>
         전송버튼
       </div>
-      <input
-        type="file"
-        accept="image/jpeg"
-        onChange={(e) => onChangeImage(e)}
-      />
-      <div className='log-out-btn'>
+      <input type="file" accept="image/jpeg" onChange={(e) => onChangeImage(e)} />
+      <div className="log-out-btn">
         <button
-          className='log-out'
+          className="log-out"
           onClick={() => {
-            console.log('Token: ', newAccessToken);
+            console.log("Token: ", newAccessToken);
             logOut();
           }}
         >
