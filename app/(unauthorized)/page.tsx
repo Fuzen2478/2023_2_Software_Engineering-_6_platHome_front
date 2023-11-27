@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { useRouter } from "next/navigation";
 import { newAccessToken } from "../component/auth/LoginForm";
-import { useChatSocket } from "../component/chat/Socket";
+import { SendImage, useChatSocket } from "../component/chat/Socket";
 import { chat_apis } from "../api/api";
 
 const socket = io("http://49.162.4.3:4000");
@@ -64,6 +64,7 @@ export default function Home() {
   const [image, setImage] = useState(null);
 
   const onChangeImage = (e) => {
+    SendImage("6561ad0a36440fbdec157bb9", 1, "bullshit", e.target.files[0]);
     chat_apis.uploadImage(e.target.files[0]);
   };
 
