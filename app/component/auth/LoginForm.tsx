@@ -11,20 +11,19 @@ export let newAccessToken: any;
 function LoginForm() {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   //const [localStorage, setLocalStorage] = useState('');
-
   const router = useRouter();
-  function postLoginData() {
+
+  function postLoginData(e: any) {
+    e.preventDefault();
     console.log(id, password);
     return axios
-      .post(
-        'http://49.162.4.3:8080/api/jwt/no-auth/login',
-        {
-          userId: id,
-          password,
-        },
-        { withCredentials: true }
-      )
+      .post('http://49.162.4.3:8080/api/jwt/no-auth/login', {
+        userId: id,
+        password,
+        withCredentials: true,
+      })
       .then((response) => {
         console.log(response.data);
         alert('로그인에 성공했습니다!');
@@ -44,55 +43,57 @@ function LoginForm() {
       });
   }
 
-  // function adjfdf(){
-  //   axios.post(,{
-  //     header:{},
-  //   })
-  // }
-
   return (
-    <div className='flex w-full flex-col items-center justify-center'>
-      <p className='pb-10 text-center text-3xl font-bold text-blue-600'>
-        PlatHome
-      </p>
-      <div className='w-full p-8 flex flex-col gap-4 max-w-xl mx-auto'>
-        <div className='form-control'>
-          <label className='label'>
-            <span className='label-text'>이메일</span>
-          </label>
-          <input
-            type='text'
-            placeholder='@ajou.ac.kr'
-            className='input input-bordered w-full text-black'
-            onChange={(event) => setId(event.target.value)}
-            value={id}
-          />
-        </div>
+    <div className='flex justify-center items-center py-[20px]'>
+      <div className='container flex flex-col items-center justify-center w-[800px] h-[600px] bg-white border-2 border-black'>
+        <p className='w-[170px] h-[46px] pb-20 text-black text-center font-inter text-[42px] font-normal'>
+          Log-In
+        </p>
+        <form onSubmit={postLoginData} className='flex flex-col items-center'>
+          <div className='form-control py-[10px]'>
+            <input
+              type='text'
+              placeholder='Email'
+              className='input input-bordered w-[503px] h-[61px] text-black border rounded-xl border-black px-[10px]'
+              onChange={(event) => setId(event.target.value)}
+              value={id}
+            />
+          </div>
 
-        <div className='form-control'>
-          <label className='label'>
-            <span className='label-text'>비밀번호</span>
-          </label>
-          <input
-            type='password'
-            className='input input-bordered w-full text-black'
-            onChange={(event) => setPassword(event.target.value)}
-            value={password}
-          />
-        </div>
+          <div className='form-control'>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              placeholder='Password'
+              className='input input-bordered w-[503px] h-[61px] text-black border rounded-xl border-black px-[10px]'
+              onChange={(event) => setPassword(event.target.value)}
+              value={password}
+            />
+            <div className='pt-[10px]'>
+              <label>
+                <input
+                  type='checkbox'
+                  onClick={() => setShowPassword(!showPassword)}
+                />
+                <span className='text-[15px] text-black pl-[5px]'>
+                  비밀번호 보기
+                </span>
+              </label>
+            </div>
+          </div>
 
-        <div className='align-top'>
-          <button
-            type='submit'
-            onClick={postLoginData}
-            className='btn btn-primary w-full'
-          >
-            로그인
-          </button>
-        </div>
+          <div className='align-top py-[10px]'>
+            <button
+              type='submit'
+              onClick={postLoginData}
+              className='btn btn-primary w-[503px] h-[61px] bg-[#DFD8D8] rounded-full border border-black text-black'
+            >
+              로그인
+            </button>
+          </div>
+        </form>
         <div className='flex w-full justify-evenly'>
           <Link href='/password/find'>
-            <span className='h-7 text-xs font-bold text-blue-500 underline'>
+            <span className='h-7 text-[15px] font-bold text-blue-500 underline'>
               비밀번호 찾기
             </span>
           </Link>
