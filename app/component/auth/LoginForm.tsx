@@ -17,7 +17,6 @@ function LoginForm() {
   //const [localStorage, setLocalStorage] = useState('');
   const router = useRouter();
 
-<<<<<<< HEAD
   // function postLoginData(e: any) {
   //   e.preventDefault();
   //   console.log(id, password);
@@ -52,16 +51,6 @@ function LoginForm() {
       .login({
         email: id,
         password,
-=======
-  function postLoginData(e: any) {
-    e.preventDefault();
-    console.log(id, password);
-    return axios
-      .post('http://49.162.4.3:8080/api/jwt/no-auth/login', {
-        userId: id,
-        password,
-        withCredentials: true,
->>>>>>> main
       })
       .then((response) => {
         console.log(response.data);

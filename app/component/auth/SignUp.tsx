@@ -11,11 +11,7 @@ function SignUp() {
   const [id, setId] = useState('');
   const [num, setVerifyNum] = useState('');
   const [password, setPassword] = useState('');
-<<<<<<< HEAD
-  const [nickname, setNickname] = useState('');
-=======
   const [username, setUsername] = useState('');
->>>>>>> main
   const [showPassword, setShowPassword] = useState(false);
   const [passwordCheck, setPwck] = useState('');
   const [isEqual, setIsEqual] = useState(false);
@@ -45,34 +41,6 @@ function SignUp() {
   //     });
   // }
   function postSignUpData() {
-<<<<<<< HEAD
-    console.log(id, num, password, nickname);
-
-    return (
-      account_apis
-        .signup({
-          email: id,
-          authCode: num,
-          nickname,
-          password,
-        })
-        // .then((response) => {
-        //   console.log(response.data);
-        //   router.replace('/login');
-        //   // 회원가입 성공 처리
-        // })
-        .catch((error) => {
-          alert('가입에 실패했습니다. 입력한 내용을 다시 확인해 주세요.');
-          console.error(error);
-          // 회원가입 실패 처리
-        })
-    );
-  }
-
-  function postEmailCert() {
-    return account_apis
-      .mail_send(id)
-=======
     console.log(id, num, password, username);
     return axios
       .post('http://49.162.4.3:8080/api/jwt/no-auth/sign-up', {
@@ -104,7 +72,6 @@ function SignUp() {
         },
         { withCredentials: true }
       )
->>>>>>> main
       .then((response) => {
         return axios
           .post(
@@ -234,23 +201,14 @@ function SignUp() {
 
                   <div className='mb-6 pt-[10px]'>
                     <div className='box-border pb-3 text-black'>
-<<<<<<< HEAD
-                      <label htmlFor='email'>* 닉네임</label>
-=======
                       <label htmlFor='email'>* 유저네임</label>
->>>>>>> main
                     </div>
                     <div className='auto container box-border'>
                       <div className='container relative rounded-sm '>
                         <input
                           type='text'
-<<<<<<< HEAD
-                          value={nickname}
-                          onChange={(event) => setNickname(event.target.value)}
-=======
                           value={username}
                           onChange={(event) => setUsername(event.target.value)}
->>>>>>> main
                           className='input input-bordered w-[503px] h-[50px] text-black border rounded-xl border-black px-[10px]'
                         />
                       </div>

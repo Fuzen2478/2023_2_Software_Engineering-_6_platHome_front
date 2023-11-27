@@ -2,19 +2,11 @@ import axios from 'axios';
 import { ZodError, z } from 'zod';
 
 const main_api = axios.create({
-<<<<<<< HEAD
-  baseURL: process.env.SERVER_URL + ':' + process.env.MAIN_PORT + '/api',
+  baseURL: 'http://49.162.4.3:8080/api',
 });
 
 const chat_api = axios.create({
-  baseURL: process.env.SERVER_URL + ':' + process.env.CHAT_PORT + '/api',
-=======
-  baseURL: "http://49.162.4.3:8080/api",
-});
-
-const chat_api = axios.create({
-  baseURL: "http://49.162.4.3:4000/api",
->>>>>>> main
+  baseURL: 'http://49.162.4.3:4000/api',
 });
 
 //need to add type
@@ -138,30 +130,30 @@ export interface IACCEPTEDEstate {
 }
 
 export const request_apis = {
-  post_form: () => main_api.post("/requested/auth/form"),
-  patch_form: () => main_api.patch("/requested/auth/form"),
-  post_file: () => main_api.post("/requested/auth/file"),
-  patch_file: () => main_api.patch("/requested/auth/file"),
-  get: () => main_api.get("/requested/auth", { withCredentials: true }),
+  post_form: () => main_api.post('/requested/auth/form'),
+  patch_form: () => main_api.patch('/requested/auth/form'),
+  post_file: () => main_api.post('/requested/auth/file'),
+  patch_file: () => main_api.patch('/requested/auth/file'),
+  get: () => main_api.get('/requested/auth', { withCredentials: true }),
   delete: (userId: number) => main_api.delete(`/requested/auth${userId}`),
 }; //maybe for admin?
 
 export const account_apis = {
   get: (userdata: IUser) => {
     const response = main_api
-      .get("/jwt/auth", { params: userdata, withCredentials: true })
+      .get('/jwt/auth', { params: userdata, withCredentials: true })
       .then((res) => res.data);
     return response;
   },
   get_token: (userdata: IUser) => {
     const response = main_api
-      .get("/jwt/auth/token", { params: userdata, withCredentials: true })
+      .get('/jwt/auth/token', { params: userdata, withCredentials: true })
       .then((res) => res.data);
     return response;
   },
   logout: (input: any) => {
     const response = main_api
-      .get("/jwt/auth/logout", { headers: input, withCredentials: true })
+      .get('/jwt/auth/logout', { headers: input, withCredentials: true })
       .then((res) => res.data);
     return response;
   },
@@ -179,7 +171,7 @@ export const account_apis = {
   },
   mail_send: (input: string) => {
     const response = main_api
-      .post("/email/no-auth/send-email", { userId: input })
+      .post('/email/no-auth/send-email', { userId: input })
       .then((res) => {
         return res.data;
       });
@@ -196,13 +188,13 @@ export const account_apis = {
 export const estate_apis = {
   get_map: (filter?: any) => {
     const response = main_api
-      .get("/estate/no-auth/map", { params: filter, withCredentials: true })
+      .get('/estate/no-auth/map', { params: filter, withCredentials: true })
       .then((res) => res.data);
     return response;
   },
   get_board: (filter?: any) => {
     const response = main_api
-      .get("/estate/no-auth/board", { params: filter, withCredentials: true })
+      .get('/estate/no-auth/board', { params: filter, withCredentials: true })
       .then((res) => res.data);
     return response;
   },
@@ -233,7 +225,7 @@ export const chat_apis = {
   },
   getRoom: () => {
     const response = chat_api
-      .get("/me/chatrooms", { withCredentials: true })
+      .get('/me/chatrooms', { withCredentials: true })
       .then((res) => res.data);
     return response;
   },

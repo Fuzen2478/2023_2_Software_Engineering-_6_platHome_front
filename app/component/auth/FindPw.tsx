@@ -11,7 +11,7 @@ export default function FindPw() {
     console.log(idForFind);
     return axios
       .post(
-        'http://202.30.29.204:8080/members/password/find',
+        'http://49.162.4.3:8080/members/password/find',
         {
           email: idForFind,
         },
@@ -32,8 +32,8 @@ export default function FindPw() {
 
   return (
     <div>
-      <div className='relative'>
-        <div>
+      <div className='relative flex justify-center items-center py-[20px]'>
+        <div className='container flex flex-col items-center justify-center w-[800px] h-[600px] bg-white border-2 border-black'>
           <div className='my-36 w-auto px-5'>
             <p className='pb-10 text-center text-2xl font-bold text-blue-600'>
               비밀번호 찾기
@@ -41,16 +41,16 @@ export default function FindPw() {
             <div className='mb-10'>
               <form onSubmit={SubmitForm}>
                 <div className='mb-8'>
-                  <div className='box-border pb-3'>
-                    <label htmlFor='email'>이메일</label>
+                  <div className='box-border pb-3 text-black'>
+                    <label htmlFor='email'>* 이메일</label>
                   </div>
                   <div className='auto container box-border'>
-                    <div className='container relative rounded-sm border border-gray-300'>
+                    <div className='container relative rounded-sm'>
                       <input
                         type='text'
                         onChange={(event) => setIdForFind(event.target.value)}
-                        className='text-m relative inline-flex w-full p-2'
-                        placeholder='ajoulife@ajou.ac.kr'
+                        className='input input-bordered flex-1 text-blackinput input-bordered w-[503px] h-[50px] text-black border rounded-xl border-black px-[10px]'
+                        placeholder='@ajou.ac.kr'
                       />
                     </div>
                   </div>
@@ -59,15 +59,15 @@ export default function FindPw() {
                   <button
                     type='submit'
                     onClick={findPassword}
-                    className='h-9 w-full rounded-sm bg-blue-500 text-sm font-bold text-white'
+                    className='btn btn-primary w-[503px] h-[61px] bg-[#DFD8D8] rounded-full border border-black text-black'
                   >
                     비밀번호 찾기
                   </button>
                 </div>
-                <Link href='/password/find'>
+                <Link href='/login'>
                   <div className='mb-5 align-top'>
                     <button className='h-9 w-full rounded-sm text-xs font-bold text-blue-500 underline'>
-                      비밀번호 재설정
+                      로그인 페이지로 이동
                     </button>
                   </div>
                 </Link>
