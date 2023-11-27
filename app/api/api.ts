@@ -2,11 +2,19 @@ import axios from 'axios';
 import { ZodError, z } from 'zod';
 
 const main_api = axios.create({
+<<<<<<< HEAD
   baseURL: process.env.SERVER_URL + ':' + process.env.MAIN_PORT + '/api',
 });
 
 const chat_api = axios.create({
   baseURL: process.env.SERVER_URL + ':' + process.env.CHAT_PORT + '/api',
+=======
+  baseURL: "http://49.162.4.3:8080/api",
+});
+
+const chat_api = axios.create({
+  baseURL: "http://49.162.4.3:4000/api",
+>>>>>>> main
 });
 
 //need to add type
@@ -68,6 +76,7 @@ export interface IREQUESTEDEstate {
     BuildingEntrance: boolean;
     washingMachine: boolean;
   };
+  contents: string;
   //this is for requesting estate
   contractURL?: string;
 }
@@ -121,6 +130,7 @@ export interface IACCEPTEDEstate {
     BuildingEntrance: boolean;
     washingMachine: boolean;
   };
+  contents: string;
   //this is for accepted estate
   id: number;
   area: 'GWANGGYO' | 'INGYEDONG' | 'UMAN' | 'WONCHEON' | 'MAETAN';
@@ -128,30 +138,30 @@ export interface IACCEPTEDEstate {
 }
 
 export const request_apis = {
-  post_form: () => main_api.post('/requested/auth/form'),
-  patch_form: () => main_api.patch('/requested/auth/form'),
-  post_file: () => main_api.post('/requested/auth/file'),
-  patch_file: () => main_api.patch('/requested/auth/file'),
-  get: () => main_api.get('/requested/auth'),
+  post_form: () => main_api.post("/requested/auth/form"),
+  patch_form: () => main_api.patch("/requested/auth/form"),
+  post_file: () => main_api.post("/requested/auth/file"),
+  patch_file: () => main_api.patch("/requested/auth/file"),
+  get: () => main_api.get("/requested/auth", { withCredentials: true }),
   delete: (userId: number) => main_api.delete(`/requested/auth${userId}`),
 }; //maybe for admin?
 
 export const account_apis = {
   get: (userdata: IUser) => {
     const response = main_api
-      .get('/jwt/auth', { params: userdata })
+      .get("/jwt/auth", { params: userdata, withCredentials: true })
       .then((res) => res.data);
     return response;
   },
   get_token: (userdata: IUser) => {
     const response = main_api
-      .get('/jwt/auth/token', { params: userdata })
+      .get("/jwt/auth/token", { params: userdata, withCredentials: true })
       .then((res) => res.data);
     return response;
   },
   logout: (input: any) => {
     const response = main_api
-      .get('/jwt/auth/logout', { params: input })
+      .get("/jwt/auth/logout", { headers: input, withCredentials: true })
       .then((res) => res.data);
     return response;
   },
@@ -169,7 +179,7 @@ export const account_apis = {
   },
   mail_send: (input: string) => {
     const response = main_api
-      .post('/email/no-auth/mail-send', input, { withCredentials: true })
+      .post("/email/no-auth/send-email", { userId: input })
       .then((res) => {
         return res.data;
       });
@@ -177,7 +187,7 @@ export const account_apis = {
   },
   get_member: (input: any) => {
     const response = main_api
-      .get(`/member/auth/${input?.userId}`)
+      .get(`/member/auth/${input?.userId}`, { withCredentials: true })
       .then((res) => res.data);
     return response;
   },
@@ -186,19 +196,19 @@ export const account_apis = {
 export const estate_apis = {
   get_map: (filter?: any) => {
     const response = main_api
-      .get('/estate/no-auth/map', { params: filter })
+      .get("/estate/no-auth/map", { params: filter, withCredentials: true })
       .then((res) => res.data);
     return response;
   },
   get_board: (filter?: any) => {
     const response = main_api
-      .get('/estate/no-auth/board', { params: filter })
+      .get("/estate/no-auth/board", { params: filter, withCredentials: true })
       .then((res) => res.data);
     return response;
   },
   get: (estateId: number) => {
     const response = main_api
-      .get(`/estate/no-auth/${estateId}`)
+      .get(`/estate/no-auth/${estateId}`, { withCredentials: true })
       .then((res) => res.data);
     return response;
   },
@@ -220,10 +230,11 @@ export const chat_apis = {
   createRoom: (input: any) => {
     const response = chat_api.post('/chatroom', input).then((res) => res.data);
     return response;
-    chat_api.post('/chatroom');
   },
   getRoom: () => {
-    const response = chat_api.get('/chatroom').then((res) => res.data);
+    const response = chat_api
+      .get("/me/chatrooms", { withCredentials: true })
+      .then((res) => res.data);
     return response;
   },
   uploadImage: (image: { file: string; type: string }) => {

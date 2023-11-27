@@ -3,14 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "dev": "pnpm with-env next dev",
+    "build": "pnpm with-env next build",
+    "start": "pnpm with-env next start",
+    "lint": "dotenv -v SKIP_ENV_VALIDATION=1 next lint",
+    "with-env": "dotenv -e .env"
   },
   "dependencies": {
+    "@nextui-org/react": "^2.2.9",
     "axios": "^1.6.2",
     "bufferutil": "^4.0.8",
+    "dotenv": "^16.3.1",
+    "dotenv-cli": "^7.3.0",
     "lucide-react": "^0.292.0",
     "next": "^14.0.3",
     "react": "^18.2.0",
