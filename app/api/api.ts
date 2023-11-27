@@ -171,7 +171,7 @@ export const account_apis = {
   },
   mail_send: (input: string) => {
     const response = main_api
-      .post("/email/no-auth/mail-send", input)
+      .post("/email/no-auth/send-email", { userId: input })
       .then((res) => {
         return res.data;
       });
