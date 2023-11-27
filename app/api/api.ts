@@ -1,5 +1,5 @@
 import axios from "axios";
-import { z } from "zod";
+import { ZodError, z } from "zod";
 
 const main_api = axios.create({
   baseURL: process.env.SERVER_URL + ":" + process.env.MAIN_PORT + "/api",
@@ -21,13 +21,27 @@ export interface IUser {
 
 export interface IREQUESTEDEstate {
   userId: string;
-  roomType: "STUDIO" | "TWO-THREEROOM" | "OFFICETEL" | "ONE-ROOM" | "EFFICIENCY";
+  roomType:
+    | "STUDIO"
+    | "TWO-THREEROOM"
+    | "OFFICETEL"
+    | "ONE-ROOM"
+    | "EFFICIENCY";
   rentalType: "MONTHLY" | "JEONSE";
   deposit: number;
   monthlyRent: number;
   maintenanceFee: number;
   squareFeet: number;
-  floor: "FIRST" | "SECOND" | "THIRD" | "FOURTH" | "FIFTH" | "SIXTH" | "SEVENTHUPPER" | "TOP" | "UNDER";
+  floor:
+    | "FIRST"
+    | "SECOND"
+    | "THIRD"
+    | "FOURTH"
+    | "FIFTH"
+    | "SIXTH"
+    | "SEVENTHUPPER"
+    | "TOP"
+    | "UNDER";
   option: {
     elevator: boolean;
     park: boolean;
@@ -60,13 +74,27 @@ export interface IREQUESTEDEstate {
 
 export interface IACCEPTEDEstate {
   userId: string;
-  roomType: "STUDIO" | "TWO-THREEROOM" | "OFFICETEL" | "ONE-ROOM" | "EFFICIENCY";
+  roomType:
+    | "STUDIO"
+    | "TWO-THREEROOM"
+    | "OFFICETEL"
+    | "ONE-ROOM"
+    | "EFFICIENCY";
   rentalType: "MONTHLY" | "JEONSE";
   deposit: number;
   monthlyRent: number;
   maintenanceFee: number;
   squareFeet: number;
-  floor: "FIRST" | "SECOND" | "THIRD" | "FOURTH" | "FIFTH" | "SIXTH" | "SEVENTHUPPER" | "TOP" | "UNDER";
+  floor:
+    | "FIRST"
+    | "SECOND"
+    | "THIRD"
+    | "FOURTH"
+    | "FIFTH"
+    | "SIXTH"
+    | "SEVENTHUPPER"
+    | "TOP"
+    | "UNDER";
   option: {
     elevator: boolean;
     park: boolean;
@@ -106,34 +134,104 @@ export const request_apis = {
   patch_file: () => main_api.patch("/requested/auth/file"),
   get: () => main_api.get("/requested/auth"),
   delete: (userId: number) => main_api.delete(`/requested/auth${userId}`),
-};
+}; //maybe for admin?
 
 export const account_apis = {
   get: (userdata: IUser) => {
-    const response = main_api.get("/jwt/auth", { params: userdata }).then((res) => res.data);
+    const response = main_api
+      .get("/jwt/auth", { params: userdata })
+      .then((res) => res.data);
     return response;
   },
-  get_token: () => {
-    main_api.get("/jwt/auth/token");
+  get_token: (userdata: IUser) => {
+    const response = main_api
+      .get("/jwt/auth/token", { params: userdata })
+      .then((res) => res.data);
+    return response;
   },
-  logout: () => main_api.get("/jwt/auth/logout"),
-  signup: () => main_api.post("/jwt/no-auth/sign-up"),
-  login: () => main_api.post("/jwt/no-auth/login"),
-  mail_send: () => main_api.post("/email/no-auth/mail-send"),
-  get_member: (userId: number) => main_api.get(`/member/auth/${userId}`),
+  logout: (input: any) => {
+    const response = main_api
+      .get("/jwt/auth/logout", { params: input })
+      .then((res) => res.data);
+    return response;
+  },
+  signup: (input: any) => {
+    const response = main_api
+      .post("/jwt/no-auth/sign-up", input)
+      .then((res) => res.data);
+    return response;
+  },
+  login: (input: any) => {
+    const response = main_api
+      .post("/jwt/no-auth/login", input)
+      .then((res) => res.data);
+    return response;
+  },
+  mail_send: (input: string) => {
+    const response = main_api
+      .post("/email/no-auth/mail-send", input)
+      .then((res) => {
+        return res.data;
+      });
+    return response;
+  },
+  get_member: (input: any) => {
+    const response = main_api
+      .get(`/member/auth/${input?.userId}`)
+      .then((res) => res.data);
+    return response;
+  },
 };
 
 export const estate_apis = {
-  get_map: () => main_api.get("/estate/no-auth/map"),
-  get_board: () => main_api.get("/estate/no-auth/board"),
-  get: (estateId: number) => main_api.get(`/estate/no-auth/${estateId}`),
-  post: () => main_api.post("/estate/auth"),
-  patch: (estateId: number) => main_api.patch(`/estate/auth/${estateId}`),
+  get_map: (filter?: any) => {
+    const response = main_api
+      .get("/estate/no-auth/map", { params: filter })
+      .then((res) => res.data);
+    return response;
+  },
+  get_board: (filter?: any) => {
+    const response = main_api
+      .get("/estate/no-auth/board", { params: filter })
+      .then((res) => res.data);
+    return response;
+  },
+  get: (estateId: number) => {
+    const response = main_api
+      .get(`/estate/no-auth/${estateId}`)
+      .then((res) => res.data);
+    return response;
+  },
+  post: (input: any) => {
+    const response = main_api
+      .post("/estate/auth", input)
+      .then((res) => res.data);
+    return response;
+  },
+  patch: (estateId: number) => {
+    const response = main_api
+      .patch(`/estate/auth/${estateId}`)
+      .then((res) => res.data);
+    return response;
+  },
 };
 
 export const chat_apis = {
-  createRoom: () => chat_api.post("/chatroom"),
-  getRoom: () => chat_api.get("/me/chatroom"),
-  uploadImage: (image: { file: string; type: string }) =>
-    chat_api.post("/upload", image, { headers: { "Content-Type": "multipart/form-data" } }),
+  createRoom: (input: any) => {
+    const response = chat_api.post("/chatroom", input).then((res) => res.data);
+    return response;
+    chat_api.post("/chatroom");
+  },
+  getRoom: () => {
+    const response = chat_api.get("/chatroom").then((res) => res.data);
+    return response;
+  },
+  uploadImage: (image: { file: string; type: string }) => {
+    const response = chat_api
+      .post("/upload", image, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+      .then((res) => res.data);
+    return response;
+  },
 };
