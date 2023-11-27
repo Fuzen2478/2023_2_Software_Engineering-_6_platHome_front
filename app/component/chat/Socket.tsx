@@ -85,6 +85,7 @@ async function getChatData({
   setState: Dispatch<SetStateAction<IChat[]>>;
 }) {
   const data = await chat_apis.getRoom();
+  console.log("room data: ", data);
   setState(data.data);
 }
 

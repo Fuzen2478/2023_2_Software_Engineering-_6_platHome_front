@@ -159,7 +159,7 @@ export const account_apis = {
   },
   signup: (input: any) => {
     const response = main_api
-      .post("/jwt/no-auth/sign-up", input)
+      .post("/jwt/no-auth/sign-up", input, { withCredentials: true })
       .then((res) => res.data);
     return response;
   },
@@ -206,13 +206,13 @@ export const estate_apis = {
   },
   post: (input: any) => {
     const response = main_api
-      .post("/estate/auth", input)
+      .post("/estate/auth", input, { withCredentials: true })
       .then((res) => res.data);
     return response;
   },
   patch: (estateId: number) => {
     const response = main_api
-      .patch(`/estate/auth/${estateId}`)
+      .patch(`/estate/auth/${estateId}`, { withCredentials: true })
       .then((res) => res.data);
     return response;
   },
@@ -220,7 +220,9 @@ export const estate_apis = {
 
 export const chat_apis = {
   createRoom: (input: any) => {
-    const response = chat_api.post("/chatroom", input).then((res) => res.data);
+    const response = chat_api
+      .post("/chatroom", input, { withCredentials: true })
+      .then((res) => res.data);
     return response;
   },
   getRoom: () => {
@@ -238,3 +240,13 @@ export const chat_apis = {
     return response;
   },
 };
+
+interface IWishList {
+  estateId: number;
+  thumbnail: string;
+  roomType: "JEONSE" | "MONTHLY";
+  deposit: number;
+  monthlyRent: number;
+  maintenanceFee: number;
+  squareFeet: number;
+}

@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import { newAccessToken } from "../component/auth/LoginForm";
 import { SendImage, useChatSocket } from "../component/chat/Socket";
 import { chat_apis } from "../api/api";
+import { Map, MapMarker } from "react-kakao-maps-sdk";
+import Search from "../component/board/Search";
 
 const socket = io("http://49.162.4.3:4000");
 
@@ -31,39 +33,12 @@ const socket = io("http://49.162.4.3:4000");
 //     });
 // }
 
-// console.log(socket);
-
-async function CreateRoom() {
-  console.log("Entering chat room");
-  socket.emit("enterChatRoom", {
-    roomId: "6561ad0a36440fbdec157bb9",
-  });
-}
-
-async function Connect() {
-  console.log("Connecting");
-  await socket.on("connect", () => {
-    console.log("connect");
-  });
-}
-
-async function SendMessage() {
-  console.log("Sending message");
-  socket.emit("sendImage", {
-    userId: 1,
-    roomId: "6561ad0a36440fbdec157bb9",
-    nickname: "bullshit_Next",
-    message:
-      "https://plathomebucket.s3.ap-northeast-2.amazonaws.com/chat/Sat%20Nov%2025%202023%2017%3A20%3A53%20GMT%2B0900%20%28%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%20%ED%91%9C%EC%A4%80%EC%8B%9C%29_images.jpeg",
-  });
-}
-
 export default function Home() {
   const router = useRouter();
 
   const [image, setImage] = useState(null);
 
-  const onChangeImage = (e) => {
+  const onChangeImage = (e: any) => {
     SendImage("6561ad0a36440fbdec157bb9", 1, "bullshit", e.target.files[0]);
     chat_apis.uploadImage(e.target.files[0]);
   };
@@ -74,43 +49,25 @@ export default function Home() {
 
   return (
     <div className="main-content">
-      메인콘텐츠
-      <div
-        className="button h-32 w-32 bg-red-400 flex justify-center items-center"
-        onClick={() => Connect()}
+      <Map
+        center={{ lat: 37.2782, lng: 127.042085 }}
+        style={{ width: "100%", height: "calc(100vh - 4rem)" }}
       >
-        연결버튼
-      </div>
-      <div
-        className="button h-32 w-32 bg-blue-400 flex justify-center items-center"
-        onClick={() => CreateRoom()}
-      >
-        입장버튼
-      </div>
-      <div
-        className="button h-32 w-32 bg-white flex justify-center items-center"
-        onClick={() => SendMessage()}
-      >
-        전송버튼
-      </div>
-      <input
+        <MapMarker position={{ lat: 37.2782, lng: 127.042085 }}>
+          <div style={{ color: "#000" }}>Hello World!</div>
+        </MapMarker>
+      </Map>
+      <Search data={{ data: [] }} className="absolute top-20 z-50 -right-6" />
+    </div>
+  );
+}
+
+{
+  /* <input
         type="file"
         accept={"image/jpeg" || "image/HEIC" || "image/jpg"}
         onChange={(e) => onChangeImage(e)}
-      />
-      <div className="log-out-btn">
-        <button
-          className="log-out"
-          onClick={() => {
-            console.log("Token: ", newAccessToken);
-            // logOut();
-          }}
-        >
-          로그아웃
-        </button>
-      </div>
-    </div>
-  );
+      /> */
 }
 
 // enterChatRoom //  {
