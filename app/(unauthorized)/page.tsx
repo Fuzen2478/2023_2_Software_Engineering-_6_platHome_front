@@ -5,29 +5,31 @@ import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { useRouter } from "next/navigation";
 import { newAccessToken } from "../component/auth/LoginForm";
+import { useChatSocket } from "../component/chat/Socket";
+import { chat_apis } from "../api/api";
 
 const socket = io("http://49.162.4.3:4000");
 
-function logOut() {
-  return axios
-    .get("http://49.162.4.3:8080/api/jwt/auth/logout", {
-      headers: {
-        "x-access-token": `${newAccessToken}`,
-      },
-    })
-    .then((response) => {
-      console.log(response.headers);
+// function logOut() {
+//   return axios
+//     .get("http://49.162.4.3:8080/api/jwt/auth/logout", {
+//       headers: {
+//         "x-access-token": `${newAccessToken}`,
+//       },
+//     })
+//     .then((response) => {
+//       console.log(response.headers);
 
-      console.log("로그아웃 되었습니다.");
-      // router.push('/');
-      // 로그아웃 성공 처리
-    })
-    .catch((error) => {
-      alert("로그아웃에 실패했습니다.");
-      console.error(error);
-      // 로그아웃 실패 처리
-    });
-}
+//       console.log("로그아웃 되었습니다.");
+//       // router.push('/');
+//       // 로그아웃 성공 처리
+//     })
+//     .catch((error) => {
+//       alert("로그아웃에 실패했습니다.");
+//       console.error(error);
+//       // 로그아웃 실패 처리
+//     });
+// }
 
 // console.log(socket);
 
@@ -56,60 +58,13 @@ async function SendMessage() {
   });
 }
 
-async function Logic() {
-  await Connect();
-  await CreateRoom();
-}
-
-function uploadImageForm(imagebinary: any) {
-  axios
-    .post(
-      "http://49.162.4.3:4000/api/upload/",
-      {
-        file: imagebinary,
-        type: "image/jpeg", // need to fix
-      },
-      {
-        headers: { "Content-Type": "multipart/form-data" },
-      }
-    )
-    .then((res) => {
-      console.log(res);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-}
-
-function uploadFile(inputElement: any) {
-  let returnValue;
-  const file = inputElement.files[0];
-  const reader = new FileReader();
-  reader.readAsDataURL(file);
-  reader.onloadend = (e) => {
-    returnValue = e?.target?.result;
-  };
-
-  return returnValue;
-}
-
 export default function Home() {
-  useEffect(() => {
-    const intervalId = setInterval(() => receiveMessage(), 1000);
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, []);
   const router = useRouter();
 
   const [image, setImage] = useState(null);
 
   const onChangeImage = (e) => {
-    setImage(e.target.files[0]);
-    const data = uploadFile(e.target);
-    console.log("data type: ", typeof data);
-    uploadImageForm(e.target.files[0]);
+    chat_apis.uploadImage(e.target.files[0]);
   };
 
   // useEffect(() => {
@@ -119,22 +74,35 @@ export default function Home() {
   return (
     <div className="main-content">
       메인콘텐츠
-      <div className="button h-32 w-32 bg-red-400 flex justify-center items-center" onClick={() => Connect()}>
+      <div
+        className="button h-32 w-32 bg-red-400 flex justify-center items-center"
+        onClick={() => Connect()}
+      >
         연결버튼
       </div>
-      <div className="button h-32 w-32 bg-blue-400 flex justify-center items-center" onClick={() => CreateRoom()}>
+      <div
+        className="button h-32 w-32 bg-blue-400 flex justify-center items-center"
+        onClick={() => CreateRoom()}
+      >
         입장버튼
       </div>
-      <div className="button h-32 w-32 bg-white flex justify-center items-center" onClick={() => SendMessage()}>
+      <div
+        className="button h-32 w-32 bg-white flex justify-center items-center"
+        onClick={() => SendMessage()}
+      >
         전송버튼
       </div>
-      <input type="file" accept="image/jpeg" onChange={(e) => onChangeImage(e)} />
+      <input
+        type="file"
+        accept={"image/jpeg" || "image/HEIC" || "image/jpg"}
+        onChange={(e) => onChangeImage(e)}
+      />
       <div className="log-out-btn">
         <button
           className="log-out"
           onClick={() => {
             console.log("Token: ", newAccessToken);
-            logOut();
+            // logOut();
           }}
         >
           로그아웃

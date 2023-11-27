@@ -84,3 +84,88 @@ export const TestChat: IChat[] = [
     senderId: 1,
   },
 ];
+
+interface ISchedule {
+  id: number;
+  date: string;
+  startTime: string;
+  endTime: string;
+}
+
+//일정 조율부분에서 데이터 통신은 Ischdule[] 형태로 받아옴
+
+interface IEstateReport {
+  id: number;
+  estateId: number;
+  reporterId?: number;
+  reporterContact?: string; //email
+  contents: string;
+}
+
+//매물 신고는 비로그인 상태에서도 가능하다면 reporterId 혹은 reporterContact를 기입하여 연락망을 남겨둠.
+
+interface IUserReport {
+  id: number;
+  userId: number;
+  reporterId: number;
+  contents: string;
+}
+
+//userId에 피신고 유저의 Id, reporterId에 신고자의 Id를 기입함.
+
+interface IFilter {
+  Area: {
+    gwanggyo: boolean;
+    ingyedong: boolean;
+    uman: boolean;
+    woncheon: boolean;
+    maetan: boolean;
+  };
+  RoomType: {
+    studio: boolean;
+    "two-threeRoom": boolean;
+    officetel: boolean;
+    apartment: boolean;
+  };
+  RentType: { monthly: boolean; jeonse: boolean };
+  Deposit: { min: number; max: number };
+  MonthlyFee: { min: number; max: number }; //월세 + 관리비
+  RoomSize: { min: number; max: number };
+  floor: {
+    first: boolean;
+    second: boolean;
+    third: boolean;
+    fourth: boolean;
+    fifth: boolean;
+    sixth: boolean;
+    seventhUpper: boolean;
+    top: boolean; //옥탑방
+    under: boolean; //반지하
+  };
+  option: {
+    elevator: boolean;
+    park: boolean;
+    cctv: boolean;
+    doorLock: boolean;
+    pet: boolean;
+    veranda: boolean;
+    range: "induction" | "gas" | false;
+    airConditioner: "top" | "wall" | "stand" | false;
+    refrigerator: boolean;
+    sink: boolean;
+    tv: boolean;
+    internet: boolean;
+    bed: boolean;
+    desk: boolean;
+    microwave: boolean;
+    closet: boolean;
+    shoeRack: boolean;
+    bidet: boolean;
+    interphone: boolean;
+    parking: boolean;
+    security: boolean;
+    deilveryBox: boolean;
+    BuildingEntrance: boolean;
+    washingMachine: boolean;
+  };
+}
