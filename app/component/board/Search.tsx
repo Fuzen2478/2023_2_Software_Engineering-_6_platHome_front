@@ -1,5 +1,6 @@
 "use client";
 
+import { Filter } from "lucide-react";
 import { useState } from "react";
 import { BiSearchAlt } from "react-icons/bi";
 
@@ -42,7 +43,7 @@ const Search = ({
       onSubmit={search}
     >
       <input
-        className="bg-white/50 border border-black rounded-lg px-1.5 py-0.5 focus:outline-none"
+        className="bg-white/50 border border-black rounded-lg px-1.5 py-0.5 focus:outline-none cursor-pointer"
         type="text"
         placeholder="주소, 건물명"
         value={word}
@@ -51,6 +52,10 @@ const Search = ({
       <button className="rounded-full bg-gray-400 w-7 h-7 flex items-center justify-center">
         <BiSearchAlt className="w-6 h-6 text-white" />
       </button>
+      <Filter
+        size={32}
+        className="bg-gray-500/50 border border-black rounded-2xl px-1.5 py-0.5 focus:outline-none cursor-pointer"
+      />
     </form>
   );
 };

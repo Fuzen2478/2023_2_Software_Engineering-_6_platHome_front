@@ -8,7 +8,7 @@ export default function Board() {
     <div className="w-full h-screen flex flex-col items-center bg-sky-200 font-semibold ">
       <section className="w-full px-8 my-2 flex justify-between items-center gap-4">
         <BoardInfo />
-        <Search data={[{ id: 0 }]} />
+        <Search data={{ data: [] }} />
       </section>
       <BoardList />
     </div>

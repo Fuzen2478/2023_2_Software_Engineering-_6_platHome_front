@@ -5,7 +5,11 @@ import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { useRouter } from "next/navigation";
 import { newAccessToken } from "../component/auth/LoginForm";
-import { SendImage, useChatSocket } from "../component/chat/Socket";
+import {
+  SendImage,
+  sendMessage,
+  useChatSocket,
+} from "../(authorized)/chat/Socket";
 import { chat_apis } from "../api/api";
 import { Map, MapMarker } from "react-kakao-maps-sdk";
 import Search from "../component/board/Search";
@@ -48,16 +52,29 @@ export default function Home() {
   // }, [image]);
 
   return (
-    <div className="main-content">
+    <div className="main-content max-h-[calc(100vh-5rem)] max-w-[100vw]">
       <Map
         center={{ lat: 37.2782, lng: 127.042085 }}
-        style={{ width: "100%", height: "calc(100vh - 4rem)" }}
+        style={{ width: "100%", height: "calc(100vh - 5rem)" }}
       >
         <MapMarker position={{ lat: 37.2782, lng: 127.042085 }}>
           <div style={{ color: "#000" }}>Hello World!</div>
         </MapMarker>
       </Map>
-      <Search data={{ data: [] }} className="absolute top-20 z-50 -right-6" />
+      <Search data={{ data: [] }} className="absolute top-20 z-50 -right-3" />
+      <div
+        className="absolute top-20 left-4 z-50 rounded-lg bg-black text-white w-fit py-1 px-2"
+        onClick={() =>
+          sendMessage(
+            "6564384908a74320c964fbab",
+            5,
+            "fuzen",
+            "메세지 잘 가나요?"
+          )
+        }
+      >
+        메세지 보내기
+      </div>
     </div>
   );
 }

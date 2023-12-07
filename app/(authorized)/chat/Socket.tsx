@@ -53,7 +53,16 @@ export function SocketProvider({ children }: { children: ReactNode }) {
 
     getChatData({ setState });
 
+    chatSocketClient.emit("enterChatRoom", {
+      roomId: "6564384908a74320c964fbab",
+    }); // -> mapping / 소켓 연결시마다
+
     chatSocketClient.on("chatUpdated", () => {});
+
+    chatSocketClient.on("message", (msg) => {
+      console.log(msg);
+      alert(msg);
+    });
 
     chatSocketClient.on("connect", () => {
       console.log("ChatSocket connect");
@@ -86,7 +95,7 @@ async function getChatData({
 }) {
   const data = await chat_apis.getRoom();
   console.log("room data: ", data);
-  setState(data.data);
+  // setState(data.data);
 }
 
 //emit function

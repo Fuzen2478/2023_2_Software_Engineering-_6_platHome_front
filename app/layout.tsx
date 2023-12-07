@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { SideBarProvider } from "./hook";
+import Filter from "./component/Filter";
 
 require("dotenv").config();
 
@@ -24,7 +26,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <SideBarProvider>
+        <body className="max-w-[100vw]">{children}</body>
+      </SideBarProvider>
     </html>
   );
 }

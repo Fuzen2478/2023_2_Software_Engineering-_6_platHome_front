@@ -1,13 +1,8 @@
-export default function SideBar({
-  isFold,
-  setFold,
-}: {
-  isFold: boolean;
-  setFold: (fold: boolean) => void;
-}) {
+export default function SideBar({ isFold }: { isFold: boolean }) {
   return (
-    <div className="sidebar min-h-full bg-black opacity-70" hidden={!isFold}>
-      12321143사이드바
-    </div>
+    <div
+      className="sidebar min-h-[calc(100vh-4rem)] z-50 absolute top-16 left-0 bg-black opacity-70"
+      hidden={!isFold}
+    ></div>
   );
 }

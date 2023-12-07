@@ -1,13 +1,16 @@
 "use client";
 import "@/app/globals.css";
 import Header from "../component/Header";
-import { useState } from "react";
-import { SocketProvider } from "../component/chat/Socket";
+import { SocketProvider } from "../(authorized)/chat/Socket";
 import Script from "next/script";
-// import SideBar from "../_component/SideBar";
-// import { Chat } from "../_component/chat/Chat";
+import { Chat } from "../(authorized)/chat/Chat";
+import { useSideBar } from "../hook";
+import SideBar from "../component/SideBar";
+import DatePicker from "../component/DatePicker";
+import Filter from "../component/Filter";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const { fold, setFold } = useSideBar();
   return (
     <SocketProvider>
       <Script
@@ -16,14 +19,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       />
       <div className="flex min-h-screen flex-col">
         <Header />
-        <div className="flex flex-col">
-          {/* <SideBar isFold={sideFold} setFold={setSideFold} /> */}
+        <div className="flex flex-col max-h-[calc(100vh-5rem)]">
+          <SideBar isFold={fold} />
           {children}
-          <div className="chatting-container fixed bottom-0 right-0">
-            {/* <Chat /> */}
+          <div className="chatting-container fixed bottom-0 right-0 z-50">
+            <Chat />
           </div>
         </div>
       </div>
+      {/* <DatePicker /> */}
+      <Filter />
     </SocketProvider>
   );
 }

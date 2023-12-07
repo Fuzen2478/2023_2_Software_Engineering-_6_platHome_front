@@ -13,6 +13,7 @@ export default function BoardList() {
     const getHouseInfo = async () => {
       try {
         const res = await estate_apis.get_board();
+        console.log(res);
         setHouses(res);
       } catch (error) {
         console.error(error);
