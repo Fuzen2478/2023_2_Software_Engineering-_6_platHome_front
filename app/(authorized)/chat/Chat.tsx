@@ -2,7 +2,6 @@
 import { MoreHorizontal, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { IChatRoom } from "./Chat_env";
-import { TestChatRoom, TestUser } from "../../component/fortest/test_dummy";
 import { io } from "socket.io-client";
 
 function ChatDropDown({ open }: { open: boolean }) {
@@ -54,7 +53,7 @@ function ChatRoom({
           onClick={() => handle(_index)}
         >
           <div className="opposite-name grow text-xl flex justify-center items-center pl-4">
-            {TestUser[item.toId].username}
+            {/* {TestUser[item.toId].username} */}
           </div>
           <MoreHorizontal
             size={28}
@@ -95,10 +94,8 @@ export function Chat() {
   const [chatList, setChatList] = useState<IChatRoom[]>();
   const [chatOpen, setChatOpen] = useState<boolean[]>([true]);
 
-  // console.log("sibal : ", TestChatRoom);
-
   useEffect(() => {
-    setChatList(TestChatRoom.filter((item) => item.fromId === 1));
+    // setChatList(TestChatRoom.filter((item) => item.fromId === 1));
   }, []);
 
   useEffect(() => {
