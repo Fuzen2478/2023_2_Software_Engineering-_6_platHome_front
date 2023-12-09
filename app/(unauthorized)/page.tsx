@@ -55,7 +55,7 @@ export default function Home() {
     <div className="main-content max-h-[calc(100vh-5rem)] max-w-[100vw]">
       <Map
         center={{ lat: 37.2782, lng: 127.042085 }}
-        style={{ width: "100%", height: "calc(100vh - 5rem)" }}
+        style={{ width: "100%", height: "calc(100vh - 4rem)" }}
       >
         <MapMarker position={{ lat: 37.2782, lng: 127.042085 }}>
           <div style={{ color: "#000" }}>Hello World!</div>

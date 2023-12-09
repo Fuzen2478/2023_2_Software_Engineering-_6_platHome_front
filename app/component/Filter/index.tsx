@@ -7,6 +7,7 @@ export default function Filter() {
     jeonse: true,
     monthly: true,
   });
+  const [deposit, setDeposit] = useState(100000000);
   return (
     <div className="absolute top-28 z-50 right-4 bg-[#272727] text-white w-96 h-fit rounded-lg flex flex-col py-4 px-4">
       <div className="flex w-full justify-center gap-x-2">
@@ -47,16 +48,29 @@ export default function Filter() {
         </Button>
       </div>
       <p>보증금</p>
-      <div className="w-full max-w-md h-6">
+      <div className="w-full max-w-md h-fit">
         <Slider
           size="md"
           step={0.01}
           maxValue={1}
           minValue={0}
           aria-label="보증금"
-          defaultValue={0.2}
-          onChange={() => {}}
+          defaultValue={deposit / 100000000}
+          onChange={(e) => {
+            setDeposit((e as number) * 100000000);
+          }}
         />
+        <div className="flex justify-between">
+          <p>0</p>
+          <div className="grow">
+            <span className={"ml-[" + deposit / 100000000 + "rem]"}>
+              {deposit === 100000000
+                ? ""
+                : `${Math.floor(deposit / 10000)}만원`}
+            </span>
+          </div>
+          <p>MAX</p>
+        </div>
       </div>
       <p>월세</p>
       <div className="w-full max-w-md h-6">
