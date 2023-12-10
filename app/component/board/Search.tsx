@@ -3,6 +3,7 @@
 import { Filter } from "lucide-react";
 import { useState } from "react";
 import { BiSearchAlt } from "react-icons/bi";
+import { useFilter } from "../Filter";
 
 export interface houseInfoType {
   id: number;
@@ -11,14 +12,9 @@ export interface houseInfoType {
 interface SearchProps {
   data: houseInfoType[];
 }
-const Search = ({
-  data,
-  className,
-}: {
-  data: SearchProps;
-  className?: string;
-}) => {
+const Search = ({ data, className }: { data: SearchProps; className?: string }) => {
   const [word, setWord] = useState<string>("");
+  const { filterOption, setFilterOption, showFilter, setShowFilter } = useFilter();
 
   // const search = (e: React.FormEvent<HTMLFormElement>) => {
   //   e.preventDefault();
@@ -38,10 +34,7 @@ const Search = ({
   const search = () => {};
 
   return (
-    <form
-      className={"w-72 flex items-center gap-2 " + className}
-      onSubmit={search}
-    >
+    <form className={"w-72 flex items-center gap-2 " + className} onSubmit={search}>
       <input
         className="bg-white/50 border border-black rounded-lg px-1.5 py-0.5 focus:outline-none cursor-pointer"
         type="text"
@@ -55,6 +48,7 @@ const Search = ({
       <Filter
         size={32}
         className="bg-gray-500/50 border border-black rounded-2xl px-1.5 py-0.5 focus:outline-none cursor-pointer"
+        onClick={() => setShowFilter(!showFilter)}
       />
     </form>
   );

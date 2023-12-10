@@ -14,7 +14,8 @@ export interface IFilter {
   };
   RentType: { monthly: boolean; jeonse: boolean };
   Deposit: { min: number; max: number };
-  MonthlyFee: { min: number; max: number }; //월세 + 관리비
+  MonthlyFee: { min: number; max: number };
+  MaintenanceFee: { min: number; max: number };
   RoomSize: { min: number; max: number };
   floor: {
     first: boolean;
@@ -34,8 +35,8 @@ export interface IFilter {
     doorLock: boolean;
     pet: boolean;
     veranda: boolean;
-    range: "induction" | "gas" | false;
-    airConditioner: "top" | "wall" | "stand" | false;
+    range: "induction" | "gas" | "false";
+    airConditioner: "top" | "wall" | "stand" | "false";
     refrigerator: boolean;
     sink: boolean;
     tv: boolean;
@@ -53,4 +54,11 @@ export interface IFilter {
     BuildingEntrance: boolean;
     washingMachine: boolean;
   };
+}
+
+export interface FilterContextType {
+  filterOption: IFilter;
+  setFilterOption: (n: any) => void;
+  showFilter: boolean;
+  setShowFilter: (n: boolean) => void;
 }
