@@ -4,30 +4,35 @@ import Header from "../component/Header";
 import { SocketProvider } from "../(authorized)/chat/Socket";
 import Script from "next/script";
 import { Chat } from "../(authorized)/chat/Chat";
-import { useSideBar } from "../hook";
-import SideBar from "../component/SideBar";
+import SideBar, {
+  ShowSideBarProvider,
+  useShowSideBar,
+} from "../component/SideBar";
 import DatePicker from "../component/DatePicker";
-import Filter from "../component/Filter";
+import LoginForm, { ShowLoginProvider } from "../component/auth/LoginForm";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const { fold, setFold } = useSideBar();
+  const { showSideBar, setShowSideBar } = useShowSideBar();
   return (
     <SocketProvider>
-      <Script
-        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f1494ad8df2a9262259940f691221ac9&libraries=services,clusterer&autoload=false"
-        strategy="beforeInteractive"
-      />
-      <div className="flex min-h-screen flex-col">
-        <Header />
-        <div className="flex flex-col max-h-[calc(100vh-5rem)]">
-          <SideBar isFold={fold} />
-          {children}
-          <div className="chatting-container fixed bottom-0 right-0 z-50">
-            <Chat />
+      <ShowLoginProvider>
+        <Script
+          src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f1494ad8df2a9262259940f691221ac9&libraries=services,clusterer&autoload=false"
+          strategy="beforeInteractive"
+        />
+        <div className="flex min-h-screen flex-col">
+          <Header />
+          <div className="flex flex-col max-h-[calc(100vh-5rem)]">
+            <SideBar isFold={showSideBar} />
+            {children}
+            <div className="chatting-container fixed bottom-0 right-0 z-50">
+              <Chat />
+            </div>
           </div>
         </div>
-      </div>
-      {/* <DatePicker /> */}
+        {/* <DatePicker /> */}
+        <LoginForm />
+      </ShowLoginProvider>
     </SocketProvider>
   );
 }

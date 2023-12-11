@@ -157,10 +157,16 @@ export const account_apis = {
       });
     return response;
   },
-  get_token: (userdata: IUser) => {
+  get_token: (refreshToken: string) => {
     const response = main_api
-      .get("/jwt/auth/token", { params: userdata, withCredentials: true })
-      .then((res) => res.data)
+      .get("/jwt/auth/token", {
+        headers: { Access: refreshToken },
+        withCredentials: true,
+      })
+      .then((res) => {
+        console.log(res);
+        res.data;
+      })
       .catch((err) => {
         return err.statusCode;
       });
@@ -194,11 +200,9 @@ export const account_apis = {
       .then((res) => {
         localStorage.setItem("access-key", res.data.accessToken);
         localStorage.setItem("refresh-key", res.data.refreshToken);
-        console.log("응답은 ", res);
         return 200;
       })
       .catch((err) => {
-        console.log("에러는 ", err);
         return err.statusCode;
       });
     return response;
@@ -281,10 +285,21 @@ export const chat_apis = {
     return response;
   },
   getRoom: () => {
+    const token = localStorage.getItem("access-key");
     const response = chat_api
-      .get("/me/chatrooms", { withCredentials: true })
+      .get("/me/chatrooms", {
+        headers: { "x-access-token": token },
+        withCredentials: true,
+      })
       .then((res) => res.data)
       .catch((err) => {
+        if (err.response.status === 401) {
+          localStorage.removeItem("access-key");
+          localStorage.removeItem("refresh-key");
+          // window.location.reload();
+          // const refreshToken = localStorage.getItem("refresh-key");
+          // account_apis.get_token(refreshToken as string);
+        }
         return err.statusCode;
       });
     return response;

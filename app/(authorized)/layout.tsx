@@ -1,14 +1,15 @@
 import { Chat } from "./chat/Chat";
+import { SocketProvider } from "./chat/Socket";
 
-export default function AutenticationLayout() {
+export default function AutenticationLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   if (typeof window !== "undefined") {
-    const item = localStorage.getItem("key");
-    if (item) {
-      return (
-        <div>
-          <Chat />
-        </div>
-      );
+    const accessKey = localStorage.getItem("access-key");
+    if (accessKey) {
+      return <SocketProvider>{children}</SocketProvider>;
     } else {
       return <></>;
     }

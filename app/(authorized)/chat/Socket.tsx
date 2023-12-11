@@ -12,7 +12,7 @@ import { io } from "socket.io-client";
 import { useDisclosure } from "@nextui-org/react";
 import { chat_apis } from "@/app/api/api";
 
-const chatSocketClient = io("http://49.162.4.3:4000", {
+const chatSocketClient = io("http://121.137.66.90:4000", {
   path: "/socket.io",
   transports: ["websocket"],
   autoConnect: false,
@@ -53,6 +53,11 @@ export function SocketProvider({ children }: { children: ReactNode }) {
 
     getChatData({ setState });
 
+    state.map((item) => {
+      chatSocketClient.emit("enterChatRoom", {
+        roomId: item._id,
+      });
+    });
     chatSocketClient.emit("enterChatRoom", {
       roomId: "6564384908a74320c964fbab",
     }); // -> mapping / 소켓 연결시마다
@@ -95,7 +100,18 @@ async function getChatData({
 }) {
   const data = await chat_apis.getRoom();
   console.log("room data: ", data);
-  // setState(data.data);
+  const roomData = data.map((item: any) => {
+    return {
+      _id: item._id,
+      name: "",
+      buyer_id: 0,
+      seller_id: 1,
+      created_at: "",
+      estate_id: 0,
+      last_chat: {},
+    };
+  });
+  setState(roomData);
 }
 
 //emit function

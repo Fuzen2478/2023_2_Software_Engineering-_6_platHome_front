@@ -1,11 +1,20 @@
-import { Button, ButtonGroup, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Slider } from "@nextui-org/react";
+import {
+  Button,
+  ButtonGroup,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+  Slider,
+} from "@nextui-org/react";
 import { ChevronDownIcon, FilterIcon } from "lucide-react";
 import { ReactNode, createContext, useContext, useState } from "react";
 import { FilterContextType, IFilter } from "./const";
 import { set } from "zod";
 
 export default function Filter() {
-  const { filterOption, setFilterOption, showFilter, setShowFilter } = useFilter();
+  const { filterOption, setFilterOption, showFilter, setShowFilter } =
+    useFilter();
 
   return (
     <div
@@ -54,7 +63,8 @@ export default function Filter() {
         <div className="text-primary-300">
           <span>
             {filterOption.Deposit.max !== 0 || filterOption.Deposit.min !== 0
-              ? filterOption.Deposit.max === 1000000000 && filterOption.Deposit.min === 0
+              ? filterOption.Deposit.max === 1000000000 &&
+                filterOption.Deposit.min === 0
                 ? ""
                 : `${filterOption.Deposit.min / 10000} 만원 ~ `
               : ""}
@@ -95,8 +105,10 @@ export default function Filter() {
         <p>월세</p>
         <div className="text-primary-300">
           <span>
-            {filterOption.MonthlyFee.max !== 0 || filterOption.MonthlyFee.min !== 0
-              ? filterOption.MonthlyFee.max === 10000000 && filterOption.MonthlyFee.min === 0
+            {filterOption.MonthlyFee.max !== 0 ||
+            filterOption.MonthlyFee.min !== 0
+              ? filterOption.MonthlyFee.max === 10000000 &&
+                filterOption.MonthlyFee.min === 0
                 ? ""
                 : `${filterOption.MonthlyFee.min / 10000} 만원 ~ `
               : ""}
@@ -137,8 +149,10 @@ export default function Filter() {
         <p>관리비</p>
         <div className="text-primary-300">
           <span>
-            {filterOption.MaintenanceFee.max !== 0 || filterOption.MaintenanceFee.min !== 0
-              ? filterOption.MaintenanceFee.max === 10000000 && filterOption.MaintenanceFee.min === 0
+            {filterOption.MaintenanceFee.max !== 0 ||
+            filterOption.MaintenanceFee.min !== 0
+              ? filterOption.MaintenanceFee.max === 10000000 &&
+                filterOption.MaintenanceFee.min === 0
                 ? ""
                 : `${filterOption.MaintenanceFee.min / 10000} 만원 ~ `
               : ""}
@@ -180,7 +194,8 @@ export default function Filter() {
         <div className="text-primary-300">
           <span>
             {filterOption.RoomSize.max !== 0 || filterOption.RoomSize.min !== 0
-              ? filterOption.RoomSize.max === 100 && filterOption.RoomSize.min === 0
+              ? filterOption.RoomSize.max === 100 &&
+                filterOption.RoomSize.min === 0
                 ? ""
                 : `${filterOption.RoomSize.min} 평 ~ `
               : ""}
@@ -226,7 +241,10 @@ export default function Filter() {
           variant="bordered"
           color={filterOption.Area.uman ? "primary" : "default"}
           onPress={() => {
-            setFilterOption((prev: any) => ({ ...prev, Area: { ...prev.Area, uman: !prev.Area.uman } }));
+            setFilterOption((prev: any) => ({
+              ...prev,
+              Area: { ...prev.Area, uman: !prev.Area.uman },
+            }));
           }}
           className={filterOption.Area.uman ? "" : "text-[#ADAAAA]"}
         >
@@ -238,7 +256,10 @@ export default function Filter() {
           variant="bordered"
           color={filterOption.Area.gwanggyo ? "primary" : "default"}
           onPress={() => {
-            setFilterOption((prev: any) => ({ ...prev, Area: { ...prev.Area, gwanggyo: !prev.Area.gwanggyo } }));
+            setFilterOption((prev: any) => ({
+              ...prev,
+              Area: { ...prev.Area, gwanggyo: !prev.Area.gwanggyo },
+            }));
           }}
           className={filterOption.Area.gwanggyo ? "" : "text-[#ADAAAA]"}
         >
@@ -250,7 +271,10 @@ export default function Filter() {
           variant="bordered"
           color={filterOption.Area.ingyedong ? "primary" : "default"}
           onPress={() => {
-            setFilterOption((prev: any) => ({ ...prev, Area: { ...prev.Area, ingyedong: !prev.Area.ingyedong } }));
+            setFilterOption((prev: any) => ({
+              ...prev,
+              Area: { ...prev.Area, ingyedong: !prev.Area.ingyedong },
+            }));
           }}
           className={filterOption.Area.ingyedong ? "" : "text-[#ADAAAA]"}
         >
@@ -262,7 +286,10 @@ export default function Filter() {
           variant="bordered"
           color={filterOption.Area.woncheon ? "primary" : "default"}
           onPress={() => {
-            setFilterOption((prev: any) => ({ ...prev, Area: { ...prev.Area, woncheon: !prev.Area.woncheon } }));
+            setFilterOption((prev: any) => ({
+              ...prev,
+              Area: { ...prev.Area, woncheon: !prev.Area.woncheon },
+            }));
           }}
           className={filterOption.Area.woncheon ? "" : "text-[#ADAAAA]"}
         >
@@ -274,7 +301,10 @@ export default function Filter() {
           variant="bordered"
           color={filterOption.Area.maetan ? "primary" : "default"}
           onPress={() => {
-            setFilterOption((prev: any) => ({ ...prev, Area: { ...prev.Area, maetan: !prev.Area.maetan } }));
+            setFilterOption((prev: any) => ({
+              ...prev,
+              Area: { ...prev.Area, maetan: !prev.Area.maetan },
+            }));
           }}
           className={filterOption.Area.maetan ? "" : "text-[#ADAAAA]"}
         >
@@ -306,10 +336,15 @@ export default function Filter() {
           onPress={() => {
             setFilterOption((prev: any) => ({
               ...prev,
-              RoomType: { ...prev.RoomType, "two-threeRoom": !prev.RoomType["two-threeRoom"] },
+              RoomType: {
+                ...prev.RoomType,
+                "two-threeRoom": !prev.RoomType["two-threeRoom"],
+              },
             }));
           }}
-          className={filterOption.RoomType["two-threeRoom"] ? "" : "text-[#ADAAAA]"}
+          className={
+            filterOption.RoomType["two-threeRoom"] ? "" : "text-[#ADAAAA]"
+          }
         >
           투쓰리룸
         </Button>
@@ -321,7 +356,10 @@ export default function Filter() {
           onPress={() => {
             setFilterOption((prev: any) => ({
               ...prev,
-              RoomType: { ...prev.RoomType, officetel: !prev.RoomType.officetel },
+              RoomType: {
+                ...prev.RoomType,
+                officetel: !prev.RoomType.officetel,
+              },
             }));
           }}
           className={filterOption.RoomType.officetel ? "" : "text-[#ADAAAA]"}
@@ -336,7 +374,10 @@ export default function Filter() {
           onPress={() => {
             setFilterOption((prev: any) => ({
               ...prev,
-              RoomType: { ...prev.RoomType, apartment: !prev.RoomType.apartment },
+              RoomType: {
+                ...prev.RoomType,
+                apartment: !prev.RoomType.apartment,
+              },
             }));
           }}
           className={filterOption.RoomType.apartment ? "" : "text-[#ADAAAA]"}
@@ -579,8 +620,12 @@ export default function Filter() {
             size="sm"
             radius="full"
             variant="bordered"
-            color={filterOption.option.range !== "false" ? "primary" : "default"}
-            className={filterOption.option.range !== "false" ? "" : "text-[#ADAAAA]"}
+            color={
+              filterOption.option.range !== "false" ? "primary" : "default"
+            }
+            className={
+              filterOption.option.range !== "false" ? "" : "text-[#ADAAAA]"
+            }
           >
             {filterOption.option.range === "gas"
               ? "가스레인지"
@@ -595,8 +640,15 @@ export default function Filter() {
                 size="sm"
                 radius="full"
                 variant="bordered"
-                color={filterOption.option.range !== "false" ? "primary" : "default"}
-                className={"w-6 h-8 " + (filterOption.option.range !== "false" ? "" : "text-[#ADAAAA]")}
+                color={
+                  filterOption.option.range !== "false" ? "primary" : "default"
+                }
+                className={
+                  "w-6 h-8 " +
+                  (filterOption.option.range !== "false"
+                    ? ""
+                    : "text-[#ADAAAA]")
+                }
               >
                 <ChevronDownIcon className="w-4" />
               </Button>
@@ -606,7 +658,7 @@ export default function Filter() {
               aria-label="range options"
               selectedKeys={filterOption.option.range}
               selectionMode="single"
-              onSelectionChange={(e) => {
+              onSelectionChange={(e: any) => {
                 setFilterOption((prev: any) => ({
                   ...prev,
                   option: { ...prev.option, range: e?.anchorKey },
@@ -625,8 +677,16 @@ export default function Filter() {
             size="sm"
             radius="full"
             variant="bordered"
-            color={filterOption.option.airConditioner !== "false" ? "primary" : "default"}
-            className={filterOption.option.airConditioner !== "false" ? "" : "text-[#ADAAAA]"}
+            color={
+              filterOption.option.airConditioner !== "false"
+                ? "primary"
+                : "default"
+            }
+            className={
+              filterOption.option.airConditioner !== "false"
+                ? ""
+                : "text-[#ADAAAA]"
+            }
           >
             {filterOption.option.airConditioner === "top"
               ? "천장형"
@@ -643,8 +703,17 @@ export default function Filter() {
                 size="sm"
                 radius="full"
                 variant="bordered"
-                color={filterOption.option.airConditioner !== "false" ? "primary" : "default"}
-                className={"w-6 h-8 " + (filterOption.option.airConditioner !== "false" ? "" : "text-[#ADAAAA]")}
+                color={
+                  filterOption.option.airConditioner !== "false"
+                    ? "primary"
+                    : "default"
+                }
+                className={
+                  "w-6 h-8 " +
+                  (filterOption.option.airConditioner !== "false"
+                    ? ""
+                    : "text-[#ADAAAA]")
+                }
               >
                 <ChevronDownIcon className="w-4" />
               </Button>
@@ -654,7 +723,7 @@ export default function Filter() {
               aria-label="airConditioner options"
               selectedKeys={filterOption.option.airConditioner}
               selectionMode="single"
-              onSelectionChange={(e) => {
+              onSelectionChange={(e: any) => {
                 setFilterOption((prev: any) => ({
                   ...prev,
                   option: { ...prev.option, airConditioner: e?.anchorKey },
@@ -677,7 +746,10 @@ export default function Filter() {
           onPress={() => {
             setFilterOption((prev: any) => ({
               ...prev,
-              option: { ...prev.option, refrigerator: !prev.option.refrigerator },
+              option: {
+                ...prev.option,
+                refrigerator: !prev.option.refrigerator,
+              },
             }));
           }}
           className={filterOption.option.refrigerator ? "" : "text-[#ADAAAA]"}
@@ -887,10 +959,15 @@ export default function Filter() {
           onPress={() => {
             setFilterOption((prev: any) => ({
               ...prev,
-              option: { ...prev.option, BuildingEntrance: !prev.option.BuildingEntrance },
+              option: {
+                ...prev.option,
+                BuildingEntrance: !prev.option.BuildingEntrance,
+              },
             }));
           }}
-          className={filterOption.option.BuildingEntrance ? "" : "text-[#ADAAAA]"}
+          className={
+            filterOption.option.BuildingEntrance ? "" : "text-[#ADAAAA]"
+          }
         >
           건물출입문
         </Button>
@@ -902,7 +979,10 @@ export default function Filter() {
           onPress={() => {
             setFilterOption((prev: any) => ({
               ...prev,
-              option: { ...prev.option, washingMachine: !prev.option.washingMachine },
+              option: {
+                ...prev.option,
+                washingMachine: !prev.option.washingMachine,
+              },
             }));
           }}
           className={filterOption.option.washingMachine ? "" : "text-[#ADAAAA]"}
@@ -985,7 +1065,9 @@ export function FilterProvider({ children }: { children: ReactNode }) {
   const [showFilter, setShowFilter] = useState<boolean>(false);
 
   return (
-    <FilterContext.Provider value={{ filterOption, setFilterOption, showFilter, setShowFilter }}>
+    <FilterContext.Provider
+      value={{ filterOption, setFilterOption, showFilter, setShowFilter }}
+    >
       {children}
     </FilterContext.Provider>
   );

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { SideBarProvider } from "./hook";
 import Filter from "./component/Filter";
+import { ShowSideBarProvider } from "./component/SideBar";
 
 require("dotenv").config();
 
@@ -26,9 +26,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <SideBarProvider>
-        <body className="max-w-[100vw]">{children}</body>
-      </SideBarProvider>
+      <ShowSideBarProvider>
+        <body className="max-w-[100vw] select-none">{children}</body>
+      </ShowSideBarProvider>
     </html>
   );
 }
