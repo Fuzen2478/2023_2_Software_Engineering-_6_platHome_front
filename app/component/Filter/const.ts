@@ -8,7 +8,7 @@ export interface IFilter {
   };
   RoomType: {
     studio: boolean;
-    "two-threeRoom": boolean;
+    two_threeRoom: boolean;
     officetel: boolean;
     apartment: boolean;
   };
@@ -47,11 +47,11 @@ export interface IFilter {
     closet: boolean;
     shoeRack: boolean;
     bidet: boolean;
-    interphone: boolean;
+    interPhone: boolean;
     parking: boolean;
     security: boolean;
-    deilveryBox: boolean;
-    BuildingEntrance: boolean;
+    deliveryBox: boolean;
+    buildingEntrance: boolean;
     washingMachine: boolean;
   };
 }

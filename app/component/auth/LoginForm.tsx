@@ -46,18 +46,13 @@ function LoginForm() {
   }
 
   return (
-    <div className="flex justify-center items-center py-[20px]">
+    <div className="flex justify-center items-center">
       <Modal isOpen={showLoginForm} onOpenChange={setShowLoginForm}>
         <ModalContent>
           <ModalBody className="py-16">
             <div className="container flex flex-col items-center justify-center bg-white">
-              <p className="pb-8 text-black text-center font-inter text-4xl font-normal">
-                Log-In
-              </p>
-              <form
-                onSubmit={postLoginData}
-                className="flex flex-col items-center"
-              >
+              <p className="pb-8 text-black text-center font-inter text-4xl font-normal">Log-In</p>
+              <form onSubmit={postLoginData} className="flex flex-col items-center">
                 <div className="form-control py-[10px]">
                   <input
                     type="text"
@@ -78,13 +73,8 @@ function LoginForm() {
                   />
                   <div className="pt-[10px]">
                     <label>
-                      <input
-                        type="checkbox"
-                        onClick={() => setShowPassword(!showPassword)}
-                      />
-                      <span className="text-[15px] text-black pl-[5px]">
-                        비밀번호 보기
-                      </span>
+                      <input type="checkbox" onClick={() => setShowPassword(!showPassword)} />
+                      <span className="text-[15px] text-black pl-[5px]">비밀번호 보기</span>
                     </label>
                   </div>
                 </div>
@@ -101,9 +91,7 @@ function LoginForm() {
               </form>
               <div className="flex w-full justify-evenly">
                 <Link href="/password/find">
-                  <span className="h-7 text-[15px] font-bold text-blue-500 underline">
-                    비밀번호 찾기
-                  </span>
+                  <span className="h-7 text-[15px] font-bold text-blue-500 underline">비밀번호 찾기</span>
                 </Link>
               </div>
             </div>
@@ -134,9 +122,5 @@ export function useShowLogin() {
 export function ShowLoginProvider({ children }: { children: React.ReactNode }) {
   const [showLoginForm, setShowLoginForm] = useState(false);
 
-  return (
-    <showLoginContext.Provider value={{ showLoginForm, setShowLoginForm }}>
-      {children}
-    </showLoginContext.Provider>
-  );
+  return <showLoginContext.Provider value={{ showLoginForm, setShowLoginForm }}>{children}</showLoginContext.Provider>;
 }

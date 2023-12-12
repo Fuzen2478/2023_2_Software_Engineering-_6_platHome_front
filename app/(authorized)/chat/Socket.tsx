@@ -1,13 +1,4 @@
-import {
-  Dispatch,
-  ReactNode,
-  SetStateAction,
-  createContext,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { Dispatch, ReactNode, SetStateAction, createContext, useContext, useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { useDisclosure } from "@nextui-org/react";
 import { chat_apis } from "@/app/api/api";
@@ -51,7 +42,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     chatSocketClient.connect();
 
-    getChatData({ setState });
+    // getChatData({ setState });
 
     state.map((item) => {
       chatSocketClient.emit("enterChatRoom", {
@@ -80,38 +71,35 @@ export function SocketProvider({ children }: { children: ReactNode }) {
     });
 
     chatSocketClient.on("connect_error", (error) => {
-      console.log("connect error");
-      console.log(error);
+      // console.log("connect error");
+      // console.log(error);
       onOpen();
     });
   }, []);
 
-  return (
-    <SocketContext.Provider value={state}>{children}</SocketContext.Provider>
-  );
+  return <SocketContext.Provider value={state}>{children}</SocketContext.Provider>;
 }
 
 //chat init function
 
-async function getChatData({
-  setState,
-}: {
-  setState: Dispatch<SetStateAction<IChat[]>>;
-}) {
+async function getChatData({ setState }: { setState: Dispatch<SetStateAction<IChat[]>> }) {
   const data = await chat_apis.getRoom();
   console.log("room data: ", data);
-  const roomData = data.map((item: any) => {
-    return {
-      _id: item._id,
-      name: "",
-      buyer_id: 0,
-      seller_id: 1,
-      created_at: "",
-      estate_id: 0,
-      last_chat: {},
-    };
-  });
-  setState(roomData);
+  if (typeof data === "object" && data.length > 0) {
+    const roomData = data?.map((item: any) => {
+      return {
+        _id: item._id,
+        name: "",
+        buyer_id: 0,
+        seller_id: 1,
+        created_at: "",
+        estate_id: 0,
+        last_chat: {},
+      };
+    });
+
+    setState(roomData);
+  }
 }
 
 //emit function
@@ -120,12 +108,7 @@ export function enterRoom(roomId: string) {
   chatSocketClient.emit("enterChatRoom", { roomId: roomId });
 }
 
-export function sendMessage(
-  roomId: string,
-  userId: number,
-  nickname: string,
-  message: string
-) {
+export function sendMessage(roomId: string, userId: number, nickname: string, message: string) {
   chatSocketClient.emit("sendMessage", {
     roomId: roomId,
     userId: userId,
@@ -135,19 +118,12 @@ export function sendMessage(
 }
 
 async function uploadFile(input: any) {
-  const extension = input.name
-    .split(".")
-    .filter((v: string) => v === "jpeg" || "jpg" || "heic");
+  const extension = input.name.split(".").filter((v: string) => v === "jpeg" || "jpg" || "heic");
   const result = await chat_apis.uploadImage({ file: input, type: extension });
   return result.data;
 }
 
-export function SendImage(
-  roomId: string,
-  userId: number,
-  nickname: string,
-  image: any
-) {
+export function SendImage(roomId: string, userId: number, nickname: string, image: any) {
   const data = uploadFile(image);
   chatSocketClient.emit("sendImage", {
     roomId: roomId,

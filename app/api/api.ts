@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ZodError, z } from "zod";
+import { IFilter } from "../component/Filter/const";
 
 const serverIp = process.env.SERVER_URL || "";
 const mainPort = process.env.MAIN_PORT || "";
@@ -7,10 +8,12 @@ const chatPort = process.env.CHAT_PORT || "";
 
 const main_api = axios.create({
   baseURL: serverIp + mainPort + "/api",
+  withCredentials: true,
 });
 
 const chat_api = axios.create({
   baseURL: serverIp + chatPort + "/api",
+  withCredentials: true,
 });
 
 //need to add type
@@ -25,12 +28,7 @@ export interface IUser {
 
 export interface IREQUESTEDEstate {
   userId: string;
-  roomType:
-    | "STUDIO"
-    | "TWO-THREEROOM"
-    | "OFFICETEL"
-    | "ONE-ROOM"
-    | "EFFICIENCY";
+  roomType: "STUDIO" | "TWO-THREEROOM" | "OFFICETEL" | "ONE-ROOM" | "EFFICIENCY";
   rentalType: "MONTHLY" | "JEONSE";
   deposit: number;
   monthlyRent: number;
@@ -38,16 +36,7 @@ export interface IREQUESTEDEstate {
   squareFeet: number;
   contractTerm: string;
   location: string;
-  floor:
-    | "FIRST"
-    | "SECOND"
-    | "THIRD"
-    | "FOURTH"
-    | "FIFTH"
-    | "SIXTH"
-    | "SEVENTHUPPER"
-    | "TOP"
-    | "UNDER";
+  floor: "FIRST" | "SECOND" | "THIRD" | "FOURTH" | "FIFTH" | "SIXTH" | "SEVENTHUPPER" | "TOP" | "UNDER";
   option: {
     elevator: boolean;
     park: boolean;
@@ -82,27 +71,13 @@ export interface IREQUESTEDEstate {
 
 export interface IACCEPTEDEstate {
   userId: string;
-  roomType:
-    | "STUDIO"
-    | "TWO-THREEROOM"
-    | "OFFICETEL"
-    | "ONE-ROOM"
-    | "EFFICIENCY";
+  roomType: "STUDIO" | "TWO-THREEROOM" | "OFFICETEL" | "ONE-ROOM" | "EFFICIENCY";
   rentalType: "MONTHLY" | "JEONSE";
   deposit: number;
   monthlyRent: number;
   maintenanceFee: number;
   squareFeet: number;
-  floor:
-    | "FIRST"
-    | "SECOND"
-    | "THIRD"
-    | "FOURTH"
-    | "FIFTH"
-    | "SIXTH"
-    | "SEVENTHUPPER"
-    | "TOP"
-    | "UNDER";
+  floor: "FIRST" | "SECOND" | "THIRD" | "FOURTH" | "FIFTH" | "SIXTH" | "SEVENTHUPPER" | "TOP" | "UNDER";
   option: {
     elevator: boolean;
     park: boolean;
@@ -157,18 +132,25 @@ export const account_apis = {
       });
     return response;
   },
-  get_token: (refreshToken: string) => {
-    const response = main_api
+  get_token: async () => {
+    const refresh = localStorage.getItem("refresh-key");
+    const access = localStorage.getItem("access-key");
+    const response = await main_api
       .get("/jwt/auth/token", {
-        headers: { Access: refreshToken },
+        headers: {
+          "x-access-token": access,
+          "x-refresh-token": refresh,
+        },
         withCredentials: true,
       })
       .then((res) => {
-        console.log(res);
-        res.data;
+        localStorage.setItem("access-key", res.data.accessToken);
+        localStorage.setItem("refresh-key", res.data.refreshToken);
+        return res.status;
       })
       .catch((err) => {
-        return err.statusCode;
+        console.log(err);
+        return err.status;
       });
     return response;
   },
@@ -191,7 +173,6 @@ export const account_apis = {
     return response;
   },
   login: (input: any) => {
-    console.log("로그인 요청", input);
     const response = main_api
       .post("/jwt/no-auth/login", {
         email: input.email,
@@ -208,11 +189,9 @@ export const account_apis = {
     return response;
   },
   mail_send: (input: string) => {
-    const response = main_api
-      .post("/email/no-auth/send-email", { email: input })
-      .then((res) => {
-        return res.data;
-      });
+    const response = main_api.post("/email/no-auth/send-email", { email: input }).then((res) => {
+      return res.data;
+    });
     return response;
   },
   get_member: (input: any) => {
@@ -227,11 +206,14 @@ export const account_apis = {
 };
 
 export const estate_apis = {
-  get_map: (filter?: any) => {
+  get_map: (filter: IFilter) => {
     const response = main_api
-      .get("/estate/no-auth/map", { params: filter, withCredentials: true })
-      .then((res) => res.data)
+      .post("/estate/no-auth/map/filter", filter, { withCredentials: true })
+      .then((res) => {
+        return res.data;
+      })
       .catch((err) => {
+        console.error(err);
         return err.statusCode;
       });
     return response;
@@ -293,12 +275,10 @@ export const chat_apis = {
       })
       .then((res) => res.data)
       .catch((err) => {
-        if (err.response.status === 401) {
-          localStorage.removeItem("access-key");
-          localStorage.removeItem("refresh-key");
-          // window.location.reload();
-          // const refreshToken = localStorage.getItem("refresh-key");
-          // account_apis.get_token(refreshToken as string);
+        if (err.response?.status === 401) {
+          // localStorage.removeItem("access-key");
+          // localStorage.removeItem("refresh-key");
+          // account_apis.get_token().then(() => window.location.reload());
         }
         return err.statusCode;
       });

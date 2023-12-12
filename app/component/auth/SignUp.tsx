@@ -117,12 +117,10 @@ function SignUp() {
 
   return (
     <div>
-      <div className="relative flex justify-center items-center py-[20px]">
+      <div className="relative flex justify-center items-center">
         <div className=" flex flex-col items-center bg-white w-[800px] h-[1000px]">
           <div className="my-20 w-[800px] px-5">
-            <p className="pb-10 text-center text-[30px] font-bold text-blue-900">
-              회원가입
-            </p>
+            <p className="pb-10 text-center text-[30px] font-bold text-blue-900">회원가입</p>
             <div className="flex flex-col items-center">
               <div className="mb-10">
                 <form onSubmit={SignFunc}>
@@ -150,8 +148,7 @@ function SignUp() {
 
                     <label className="label">
                       <span className="label-text text-xs text-gray-400">
-                        아주대학교 포탈에서 사용 중인 이메일을 정확하게 입력해
-                        주세요.
+                        아주대학교 포탈에서 사용 중인 이메일을 정확하게 입력해 주세요.
                         <br />
                         해당 이메일로 가입 인증 메일이 발송됩니다.
                       </span>
@@ -211,20 +208,13 @@ function SignUp() {
                           8자 이상의 영문 숫자 혼합의 비밀번호를 설정해 주세요.
                         </span>
                       ) : (
-                        <span className="text-xs text-green-400">
-                          올바른 형식의 비밀번호입니다!
-                        </span>
+                        <span className="text-xs text-green-400">올바른 형식의 비밀번호입니다!</span>
                       )}
                     </div>
                     <div className="pt-[10px]">
                       <label>
-                        <input
-                          type="checkbox"
-                          onClick={() => setShowPassword(!showPassword)}
-                        />
-                        <span className="text-[15px] text-black pl-[5px]">
-                          비밀번호 보기
-                        </span>
+                        <input type="checkbox" onClick={() => setShowPassword(!showPassword)} />
+                        <span className="text-[15px] text-black pl-[5px]">비밀번호 보기</span>
                       </label>
                     </div>
                   </div>
@@ -236,22 +226,16 @@ function SignUp() {
                       <div className="container relative rounded-sm">
                         <input
                           type="password"
-                          onChange={(event) =>
-                            checkPassword(event.target.value)
-                          }
+                          onChange={(event) => checkPassword(event.target.value)}
                           className="input input-bordered w-[503px] h-[50px] text-black border rounded-xl border-black px-[10px]"
                         />
                       </div>
                     </div>
                     <div className="relative mt-2 flex items-center">
                       {!isEqual ? (
-                        <span className="text-xs text-gray-400">
-                          비밀번호를 한 번 더 입력해 주세요.
-                        </span>
+                        <span className="text-xs text-gray-400">비밀번호를 한 번 더 입력해 주세요.</span>
                       ) : (
-                        <span className="text-xs text-green-400">
-                          비밀번호와 일치합니다!
-                        </span>
+                        <span className="text-xs text-green-400">비밀번호와 일치합니다!</span>
                       )}
                     </div>
                   </div>

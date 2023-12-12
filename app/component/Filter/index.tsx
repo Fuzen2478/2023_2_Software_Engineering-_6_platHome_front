@@ -1,20 +1,11 @@
-import {
-  Button,
-  ButtonGroup,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-  Slider,
-} from "@nextui-org/react";
+import { Button, ButtonGroup, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Slider } from "@nextui-org/react";
 import { ChevronDownIcon, FilterIcon } from "lucide-react";
 import { ReactNode, createContext, useContext, useState } from "react";
 import { FilterContextType, IFilter } from "./const";
 import { set } from "zod";
 
 export default function Filter() {
-  const { filterOption, setFilterOption, showFilter, setShowFilter } =
-    useFilter();
+  const { filterOption, setFilterOption, showFilter, setShowFilter } = useFilter();
 
   return (
     <div
@@ -63,8 +54,7 @@ export default function Filter() {
         <div className="text-primary-300">
           <span>
             {filterOption.Deposit.max !== 0 || filterOption.Deposit.min !== 0
-              ? filterOption.Deposit.max === 1000000000 &&
-                filterOption.Deposit.min === 0
+              ? filterOption.Deposit.max === 1000000000 && filterOption.Deposit.min === 0
                 ? ""
                 : `${filterOption.Deposit.min / 10000} 만원 ~ `
               : ""}
@@ -105,10 +95,8 @@ export default function Filter() {
         <p>월세</p>
         <div className="text-primary-300">
           <span>
-            {filterOption.MonthlyFee.max !== 0 ||
-            filterOption.MonthlyFee.min !== 0
-              ? filterOption.MonthlyFee.max === 10000000 &&
-                filterOption.MonthlyFee.min === 0
+            {filterOption.MonthlyFee.max !== 0 || filterOption.MonthlyFee.min !== 0
+              ? filterOption.MonthlyFee.max === 10000000 && filterOption.MonthlyFee.min === 0
                 ? ""
                 : `${filterOption.MonthlyFee.min / 10000} 만원 ~ `
               : ""}
@@ -149,10 +137,8 @@ export default function Filter() {
         <p>관리비</p>
         <div className="text-primary-300">
           <span>
-            {filterOption.MaintenanceFee.max !== 0 ||
-            filterOption.MaintenanceFee.min !== 0
-              ? filterOption.MaintenanceFee.max === 10000000 &&
-                filterOption.MaintenanceFee.min === 0
+            {filterOption.MaintenanceFee.max !== 0 || filterOption.MaintenanceFee.min !== 0
+              ? filterOption.MaintenanceFee.max === 10000000 && filterOption.MaintenanceFee.min === 0
                 ? ""
                 : `${filterOption.MaintenanceFee.min / 10000} 만원 ~ `
               : ""}
@@ -194,8 +180,7 @@ export default function Filter() {
         <div className="text-primary-300">
           <span>
             {filterOption.RoomSize.max !== 0 || filterOption.RoomSize.min !== 0
-              ? filterOption.RoomSize.max === 100 &&
-                filterOption.RoomSize.min === 0
+              ? filterOption.RoomSize.max === 100 && filterOption.RoomSize.min === 0
                 ? ""
                 : `${filterOption.RoomSize.min} 평 ~ `
               : ""}
@@ -332,19 +317,17 @@ export default function Filter() {
           size="sm"
           radius="full"
           variant="bordered"
-          color={filterOption.RoomType["two-threeRoom"] ? "primary" : "default"}
+          color={filterOption.RoomType.two_threeRoom ? "primary" : "default"}
           onPress={() => {
             setFilterOption((prev: any) => ({
               ...prev,
               RoomType: {
                 ...prev.RoomType,
-                "two-threeRoom": !prev.RoomType["two-threeRoom"],
+                "two-threeRoom": !prev.RoomType.two_threeRoom,
               },
             }));
           }}
-          className={
-            filterOption.RoomType["two-threeRoom"] ? "" : "text-[#ADAAAA]"
-          }
+          className={filterOption.RoomType.two_threeRoom ? "" : "text-[#ADAAAA]"}
         >
           투쓰리룸
         </Button>
@@ -620,12 +603,8 @@ export default function Filter() {
             size="sm"
             radius="full"
             variant="bordered"
-            color={
-              filterOption.option.range !== "false" ? "primary" : "default"
-            }
-            className={
-              filterOption.option.range !== "false" ? "" : "text-[#ADAAAA]"
-            }
+            color={filterOption.option.range !== "false" ? "primary" : "default"}
+            className={filterOption.option.range !== "false" ? "" : "text-[#ADAAAA]"}
           >
             {filterOption.option.range === "gas"
               ? "가스레인지"
@@ -640,15 +619,8 @@ export default function Filter() {
                 size="sm"
                 radius="full"
                 variant="bordered"
-                color={
-                  filterOption.option.range !== "false" ? "primary" : "default"
-                }
-                className={
-                  "w-6 h-8 " +
-                  (filterOption.option.range !== "false"
-                    ? ""
-                    : "text-[#ADAAAA]")
-                }
+                color={filterOption.option.range !== "false" ? "primary" : "default"}
+                className={"w-6 h-8 " + (filterOption.option.range !== "false" ? "" : "text-[#ADAAAA]")}
               >
                 <ChevronDownIcon className="w-4" />
               </Button>
@@ -677,16 +649,8 @@ export default function Filter() {
             size="sm"
             radius="full"
             variant="bordered"
-            color={
-              filterOption.option.airConditioner !== "false"
-                ? "primary"
-                : "default"
-            }
-            className={
-              filterOption.option.airConditioner !== "false"
-                ? ""
-                : "text-[#ADAAAA]"
-            }
+            color={filterOption.option.airConditioner !== "false" ? "primary" : "default"}
+            className={filterOption.option.airConditioner !== "false" ? "" : "text-[#ADAAAA]"}
           >
             {filterOption.option.airConditioner === "top"
               ? "천장형"
@@ -703,17 +667,8 @@ export default function Filter() {
                 size="sm"
                 radius="full"
                 variant="bordered"
-                color={
-                  filterOption.option.airConditioner !== "false"
-                    ? "primary"
-                    : "default"
-                }
-                className={
-                  "w-6 h-8 " +
-                  (filterOption.option.airConditioner !== "false"
-                    ? ""
-                    : "text-[#ADAAAA]")
-                }
+                color={filterOption.option.airConditioner !== "false" ? "primary" : "default"}
+                className={"w-6 h-8 " + (filterOption.option.airConditioner !== "false" ? "" : "text-[#ADAAAA]")}
               >
                 <ChevronDownIcon className="w-4" />
               </Button>
@@ -895,14 +850,14 @@ export default function Filter() {
           size="sm"
           radius="full"
           variant="bordered"
-          color={filterOption.option.interphone ? "primary" : "default"}
+          color={filterOption.option.interPhone ? "primary" : "default"}
           onPress={() => {
             setFilterOption((prev: any) => ({
               ...prev,
-              option: { ...prev.option, interphone: !prev.option.interphone },
+              option: { ...prev.option, interPhone: !prev.option.interPhone },
             }));
           }}
-          className={filterOption.option.interphone ? "" : "text-[#ADAAAA]"}
+          className={filterOption.option.interPhone ? "" : "text-[#ADAAAA]"}
         >
           인터폰
         </Button>
@@ -940,14 +895,14 @@ export default function Filter() {
           size="sm"
           radius="full"
           variant="bordered"
-          color={filterOption.option.deilveryBox ? "primary" : "default"}
+          color={filterOption.option.deliveryBox ? "primary" : "default"}
           onPress={() => {
             setFilterOption((prev: any) => ({
               ...prev,
-              option: { ...prev.option, deilveryBox: !prev.option.deilveryBox },
+              option: { ...prev.option, deliveryBox: !prev.option.deliveryBox },
             }));
           }}
-          className={filterOption.option.deilveryBox ? "" : "text-[#ADAAAA]"}
+          className={filterOption.option.deliveryBox ? "" : "text-[#ADAAAA]"}
         >
           택배수거함
         </Button>
@@ -955,19 +910,17 @@ export default function Filter() {
           size="sm"
           radius="full"
           variant="bordered"
-          color={filterOption.option.BuildingEntrance ? "primary" : "default"}
+          color={filterOption.option.buildingEntrance ? "primary" : "default"}
           onPress={() => {
             setFilterOption((prev: any) => ({
               ...prev,
               option: {
                 ...prev.option,
-                BuildingEntrance: !prev.option.BuildingEntrance,
+                buildingEntrance: !prev.option.buildingEntrance,
               },
             }));
           }}
-          className={
-            filterOption.option.BuildingEntrance ? "" : "text-[#ADAAAA]"
-          }
+          className={filterOption.option.buildingEntrance ? "" : "text-[#ADAAAA]"}
         >
           건물출입문
         </Button>
@@ -1015,7 +968,7 @@ export function FilterProvider({ children }: { children: ReactNode }) {
     },
     RoomType: {
       studio: true,
-      "two-threeRoom": true,
+      two_threeRoom: true,
       officetel: true,
       apartment: true,
     },
@@ -1054,20 +1007,18 @@ export function FilterProvider({ children }: { children: ReactNode }) {
       closet: true,
       shoeRack: true,
       bidet: true,
-      interphone: true,
+      interPhone: true,
       parking: true,
       security: true,
-      deilveryBox: true,
-      BuildingEntrance: true,
+      deliveryBox: true,
+      buildingEntrance: true,
       washingMachine: true,
     },
   });
   const [showFilter, setShowFilter] = useState<boolean>(false);
 
   return (
-    <FilterContext.Provider
-      value={{ filterOption, setFilterOption, showFilter, setShowFilter }}
-    >
+    <FilterContext.Provider value={{ filterOption, setFilterOption, showFilter, setShowFilter }}>
       {children}
     </FilterContext.Provider>
   );
