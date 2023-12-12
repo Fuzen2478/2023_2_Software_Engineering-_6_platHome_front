@@ -28,7 +28,12 @@ export interface IUser {
 
 export interface IREQUESTEDEstate {
   userId: string;
-  roomType: "STUDIO" | "TWO-THREEROOM" | "OFFICETEL" | "ONE-ROOM" | "EFFICIENCY";
+  roomType:
+    | "STUDIO"
+    | "TWO-THREEROOM"
+    | "OFFICETEL"
+    | "ONE-ROOM"
+    | "EFFICIENCY";
   rentalType: "MONTHLY" | "JEONSE";
   deposit: number;
   monthlyRent: number;
@@ -36,7 +41,16 @@ export interface IREQUESTEDEstate {
   squareFeet: number;
   contractTerm: string;
   location: string;
-  floor: "FIRST" | "SECOND" | "THIRD" | "FOURTH" | "FIFTH" | "SIXTH" | "SEVENTHUPPER" | "TOP" | "UNDER";
+  floor:
+    | "FIRST"
+    | "SECOND"
+    | "THIRD"
+    | "FOURTH"
+    | "FIFTH"
+    | "SIXTH"
+    | "SEVENTHUPPER"
+    | "TOP"
+    | "UNDER";
   option: {
     elevator: boolean;
     park: boolean;
@@ -71,13 +85,27 @@ export interface IREQUESTEDEstate {
 
 export interface IACCEPTEDEstate {
   userId: string;
-  roomType: "STUDIO" | "TWO-THREEROOM" | "OFFICETEL" | "ONE-ROOM" | "EFFICIENCY";
+  roomType:
+    | "STUDIO"
+    | "TWO-THREEROOM"
+    | "OFFICETEL"
+    | "ONE-ROOM"
+    | "EFFICIENCY";
   rentalType: "MONTHLY" | "JEONSE";
   deposit: number;
   monthlyRent: number;
   maintenanceFee: number;
   squareFeet: number;
-  floor: "FIRST" | "SECOND" | "THIRD" | "FOURTH" | "FIFTH" | "SIXTH" | "SEVENTHUPPER" | "TOP" | "UNDER";
+  floor:
+    | "FIRST"
+    | "SECOND"
+    | "THIRD"
+    | "FOURTH"
+    | "FIFTH"
+    | "SIXTH"
+    | "SEVENTHUPPER"
+    | "TOP"
+    | "UNDER";
   option: {
     elevator: boolean;
     park: boolean;
@@ -189,9 +217,11 @@ export const account_apis = {
     return response;
   },
   mail_send: (input: string) => {
-    const response = main_api.post("/email/no-auth/send-email", { email: input }).then((res) => {
-      return res.data;
-    });
+    const response = main_api
+      .post("/email/no-auth/send-email", { email: input })
+      .then((res) => {
+        return res.data;
+      });
     return response;
   },
   get_member: (input: any) => {
@@ -218,9 +248,9 @@ export const estate_apis = {
       });
     return response;
   },
-  get_board: (filter?: any) => {
+  get_board: (filter: IFilter) => {
     const response = main_api
-      .get("/estate/no-auth/board", { params: filter, withCredentials: true })
+      .post("/estate/no-auth/board/filter", filter, { withCredentials: true })
       .then((res) => res.data)
       .catch((err) => {
         return err.statusCode;
@@ -250,6 +280,23 @@ export const estate_apis = {
       .patch(`/estate/auth/${estateId}`, { withCredentials: true })
       .then((res) => res.data)
       .catch((err) => {
+        return err.statusCode;
+      });
+    return response;
+  },
+};
+
+export const wishlist_apis = {
+  get_wishlist: () => {
+    const access = localStorage.getItem("access-key");
+    const response = main_api
+      .get("/wish-list/auth", { withCredentials: true })
+      .then((res) => {
+        console.log(res);
+        return res.data;
+      })
+      .catch((err) => {
+        console.error(err);
         return err.statusCode;
       });
     return response;
@@ -307,3 +354,10 @@ interface IWishList {
   squareFeet: number;
   location: string;
 }
+
+// {
+//   "memberId": 0,
+//   "location": "아주로 37번길 10-3",
+//   "rentalType": "MONTHLY",
+//   "thumbNailUrl": null
+// }
