@@ -1,3 +1,4 @@
+"use client";
 import { Dispatch, ReactNode, SetStateAction, createContext, useContext, useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { useDisclosure } from "@nextui-org/react";
@@ -22,8 +23,8 @@ export function useChatSocket() {
   return state;
 }
 
-interface IChat {
-  _id: {};
+export interface IChat {
+  _id: string;
   name: string;
   buyer_id: number;
   seller_id: number;
@@ -42,22 +43,29 @@ export function SocketProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     chatSocketClient.connect();
 
-    // getChatData({ setState });
-
-    state.map((item) => {
-      chatSocketClient.emit("enterChatRoom", {
-        roomId: item._id,
+    const fetchNenter = async () => {
+      const res = await getChatData({ setState });
+      res.map((item: any) => {
+        console.log("enterChatRoom", item._id, item.buyer_id);
+        chatSocketClient.emit("enterChatRoom", {
+          roomId: item._id,
+          userId: item.buyer_id,
+        });
       });
-    });
-    chatSocketClient.emit("enterChatRoom", {
-      roomId: "6564384908a74320c964fbab",
-    }); // -> mapping / 소켓 연결시마다
+    };
+    fetchNenter();
+
+    // state.map((item) => {
+    //   chatSocketClient.emit("enterChatRoom", {
+    //     roomId: item._id,
+    //     userId: item.buyer_id,
+    //   });
+    // });
 
     chatSocketClient.on("chatUpdated", () => {});
 
     chatSocketClient.on("message", (msg) => {
       console.log(msg);
-      alert(msg);
     });
 
     chatSocketClient.on("connect", () => {
@@ -75,6 +83,10 @@ export function SocketProvider({ children }: { children: ReactNode }) {
       // console.log(error);
       onOpen();
     });
+
+    return () => {
+      chatSocketClient.disconnect();
+    };
   }, []);
 
   return <SocketContext.Provider value={state}>{children}</SocketContext.Provider>;
@@ -84,29 +96,23 @@ export function SocketProvider({ children }: { children: ReactNode }) {
 
 async function getChatData({ setState }: { setState: Dispatch<SetStateAction<IChat[]>> }) {
   const data = await chat_apis.getRoom();
-  console.log("room data: ", data);
-  if (typeof data === "object" && data.length > 0) {
-    const roomData = data?.map((item: any) => {
-      return {
-        _id: item._id,
-        name: "",
-        buyer_id: 0,
-        seller_id: 1,
-        created_at: "",
-        estate_id: 0,
-        last_chat: {},
-      };
-    });
-
-    setState(roomData);
-  }
+  console.log("getChatData", data);
+  const roomData = data.map((item: any) => {
+    return {
+      _id: item._id,
+      name: item.name,
+      buyer_id: item.buyer_id,
+      seller_id: item.seller_id,
+      estate_id: item.estate_id,
+      last_chat: {},
+    };
+  });
+  console.log("chatdata preprocess : ", roomData);
+  setState(roomData);
+  return roomData;
 }
 
 //emit function
-
-export function enterRoom(roomId: string) {
-  chatSocketClient.emit("enterChatRoom", { roomId: roomId });
-}
 
 export function sendMessage(roomId: string, userId: number, nickname: string, message: string) {
   chatSocketClient.emit("sendMessage", {
@@ -115,6 +121,7 @@ export function sendMessage(roomId: string, userId: number, nickname: string, me
     nickname: nickname,
     message: message,
   });
+  console.log("sendMessage", roomId, userId, nickname, message);
 }
 
 async function uploadFile(input: any) {

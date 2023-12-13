@@ -41,8 +41,8 @@ export const IEstateStringConvert = {
   SEVENTHUPPER: "7층 이상",
   TOP: "옥탑방",
   UNDER: "반지하",
-  "RANGE.INDUCTION": "인덕션",
-  "RANGE.GAS": "가스레인지",
+  "BUNNER.INDUCTION": "인덕션",
+  "BUNNER.GAS": "가스레인지",
   ELEVATOR: "엘리베이터",
   PARK: "공원",
   CCTV: "CCTV",
@@ -65,9 +65,96 @@ export const IEstateStringConvert = {
   INTERPHONE: "인터폰",
   PARKING: "주차",
   SECURITY: "경비원",
-  DEILVERYBOX: "택배함",
+  DELIVERYBOX: "택배함",
   BUILDINGENTRANCE: "건물출입문",
   WASHINGMACHINE: "식기세척기",
 };
 
 //userId에 피신고 유저의 Id, reporterId에 신고자의 Id를 기입함.
+
+export interface IREQUESTEDEstate {
+  userId: string;
+  roomType: "STUDIO" | "TWO-THREEROOM" | "OFFICETEL" | "ONE-ROOM" | "EFFICIENCY";
+  rentalType: "MONTHLY" | "JEONSE";
+  deposit: number;
+  monthlyRent: number;
+  maintenanceFee: number;
+  squareFeet: number;
+  contractTerm: string;
+  location: string;
+  floor: "FIRST" | "SECOND" | "THIRD" | "FOURTH" | "FIFTH" | "SIXTH" | "SEVENTHUPPER" | "TOP" | "UNDER";
+  option: {
+    elevator: boolean;
+    park: boolean;
+    cctv: boolean;
+    doorLock: boolean;
+    pet: boolean;
+    veranda: boolean;
+    range: "INDUCTION" | "GAS" | "FALSE";
+    airConditioner: "TOP" | "WALL" | "STAND" | "FALSE";
+    refrigerator: boolean;
+    sink: boolean;
+    tv: boolean;
+    internet: boolean;
+    bed: boolean;
+    desk: boolean;
+    microwave: boolean;
+    closet: boolean;
+    shoeRack: boolean;
+    bidet: boolean;
+    interphone: boolean;
+    parking: boolean;
+    security: boolean;
+    deilveryBox: boolean;
+    BuildingEntrance: boolean;
+    washingMachine: boolean;
+  };
+  contents: string;
+  images: string[];
+  //this is for requesting estate
+  contractURL?: string;
+}
+
+export interface IACCEPTEDEstate {
+  userId: string;
+  roomType: "STUDIO" | "TWO-THREEROOM" | "OFFICETEL" | "ONE-ROOM" | "EFFICIENCY";
+  rentalType: "MONTHLY" | "JEONSE";
+  deposit: number;
+  monthlyRent: number;
+  maintenanceFee: number;
+  squareFeet: number;
+  floor: "FIRST" | "SECOND" | "THIRD" | "FOURTH" | "FIFTH" | "SIXTH" | "SEVENTHUPPER" | "TOP" | "UNDER";
+  option: {
+    elevator: boolean;
+    park: boolean;
+    cctv: boolean;
+    doorLock: boolean;
+    pet: boolean;
+    veranda: boolean;
+    range: "INDUCTION" | "GAS" | "FALSE";
+    airConditioner: "TOP" | "WALL" | "STAND" | "FALSE";
+    refrigerator: boolean;
+    sink: boolean;
+    tv: boolean;
+    internet: boolean;
+    bed: boolean;
+    desk: boolean;
+    microwave: boolean;
+    closet: boolean;
+    shoeRack: boolean;
+    bidet: boolean;
+    interphone: boolean;
+    parking: boolean;
+    security: boolean;
+    deilveryBox: boolean;
+    BuildingEntrance: boolean;
+    washingMachine: boolean;
+  };
+  contents: string;
+  location: string;
+  images: string[];
+  contractTerm: string;
+  //this is for accepted estate
+  id: number;
+  area: "GWANGGYO" | "INGYEDONG" | "UMAN" | "WONCHEON" | "MAETAN";
+}

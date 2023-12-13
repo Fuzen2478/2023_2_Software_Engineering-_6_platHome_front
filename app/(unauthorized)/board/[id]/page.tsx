@@ -1,6 +1,6 @@
 "use client";
 
-import { estate_apis } from "@/app/api/api";
+import { account_apis, chat_apis, estate_apis } from "@/app/api/api";
 import { IEstateStringConvert } from "@/app/component/interface";
 import { MessageCircleIcon, Star } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
@@ -23,6 +23,7 @@ export default function Home() {
 
   useEffect(() => {
     console.log(data);
+    console.log("memberId : ", data?.memberId);
   }, [data]);
 
   return (
@@ -41,69 +42,76 @@ export default function Home() {
               양도 매물 게시글
             </div>
           </div>
-          <div className="px-8 py-4 border-4 bg-white border-black grow rounded-3xl flex gap-x-16">
-            <div className="flex flex-col gap-y-4 basis-1/2 border">
-              <img
-                className="w-full rounded-2xl"
-                src={data?.thumbNailUrl}
-                alt="houseImage"
-              />
-              <div className="flex gap-x-4">
-                <Star size={32} />
-                <MessageCircleIcon size={32} />
-              </div>
-            </div>
-            <div className="flex flex-col gap-y-4 grow">
-              <div className="border-2 border-primary-300 rounded-2xl p-4 h-[20rem] overflow-y-scroll scrollbar-hide">
-                {data?.context}
-              </div>
-              <div className="flex gap-x-4">
-                <div className="border-2 border-primary-300 rounded-2xl px-4 w-[24rem] h-[20rem] text-2xl flex flex-col justify-center">
-                  <p>{"집 유형 : " + data?.roomType}</p>
-                  <p>{"계약 유형 : " + data?.rentalType}</p>
-                  <p>{"층 수 : " + data?.floor}</p>
-                  <p>{"만료 계약 기간 : " + data?.contractTerm}</p>
-                  <p>{"보증금 : " + data?.deposit}</p>
-                  <p>{"월세 : " + data?.monthlyRent}</p>
-                  <p>{"관리비 : " + data?.maintenanceFee}</p>
-                  <p>{"평수 : 약 " + data?.squareFeet + " 평"}</p>
+          {data?.memberId !== undefined && (
+            <div className="px-8 py-4 border-4 bg-white border-black grow rounded-3xl flex gap-x-16 w-full">
+              <div className="flex flex-col gap-y-4 basis-1/2 border">
+                <img className="w-full rounded-2xl" src={data?.thumbNailUrl} alt="houseImage" />
+                <div className="flex gap-x-4">
+                  <Star size={32} />
+                  <MessageCircleIcon
+                    size={32}
+                    onClick={async () => {
+                      const oppo: object = await account_apis.get_member(data.memberId).then((res) => res);
+                      const my: object = await account_apis.auth(true).then((res) => res);
+                      chat_apis.createRoom({
+                        name: data.location,
+                        seller_id: data.memberId,
+                        seller_nickname: oppo.nickname,
+                        buyer_nickname: my.nickname,
+                        estate_id: data.estateId,
+                      });
+                    }}
+                  />
                 </div>
-                <div className="border-2 border-primary-300 rounded-2xl px-4 w-[24rem] h-[20rem] flex overflow-y-scroll scrollbar-hide">
-                  <div className="bg-primary rounded-full text-white px-4 py-2">
-                    {data?.area}
+              </div>
+              <div className="flex flex-col gap-y-4 grow">
+                <div className="border-2 border-primary-300 rounded-2xl p-4 h-[20rem] overflow-y-scroll scrollbar-hide">
+                  {data?.context}
+                </div>
+                <div className="flex gap-x-4">
+                  <div className="border-2 border-primary-300 rounded-2xl px-4 basis-1/2 h-[20rem] text-xl flex flex-col justify-center">
+                    <p>{"집 유형 : " + data?.roomType}</p>
+                    <p>{"계약 유형 : " + data?.rentalType}</p>
+                    <p>{"층 수 : " + data?.floor}</p>
+                    <p>{"만료 계약 기간 : " + data?.contractTerm}</p>
+                    <p>{"보증금 : " + data?.deposit.toLocaleString()}</p>
+                    <p>{"월세 : " + data?.monthlyRent.toLocaleString()}</p>
+                    <p>{"관리비 : " + data?.maintenanceFee.toLocaleString()}</p>
+                    <p>{"평수 : 약 " + data?.squareFeet + " 평"}</p>
                   </div>
-                  {data !== undefined ? (
-                    Object.entries(data).map(({ key, value }) => {
-                      if (value !== false || Boolean(value) !== false) {
-                        return (
-                          <div
-                            key={`${id}-${key}`}
-                            className="bg-primary rounded-xl text-white px-4 py-2 max-h-8"
-                          >
-                            {IEstateStringConvert.hasOwnProperty(
-                              value as string
-                            )
-                              ? IEstateStringConvert[
-                                  value as keyof typeof IEstateStringConvert
-                                ]
-                              : IEstateStringConvert[
-                                  (key +
-                                    "." +
-                                    value) as keyof typeof IEstateStringConvert
-                                ]}
-                          </div>
-                        );
-                      } else {
-                        return <>Not Found</>;
-                      }
-                    })
-                  ) : (
-                    <>Not Found</>
-                  )}
+                  <div className="border-2 border-primary-300 rounded-2xl p-4 grow h-[20rem] flex flex-wrap overflow-y-scroll scrollbar-hide gap-x-3 gap-y-2 items-start content-start">
+                    <div className="bg-primary rounded-2xl text-white px-4 py-2 max-h-8 w-fit flex justify-center items-center">
+                      {data?.area}
+                    </div>
+                    {data !== undefined ? (
+                      Object.entries(data.option).map(([key, value]: [string, any]) => {
+                        if (value !== false && value !== "false") {
+                          return (
+                            <div
+                              key={`${id}-${key}`}
+                              className="bg-primary rounded-2xl text-white px-4 py-2 max-h-8 w-fit flex justify-center items-center"
+                            >
+                              {IEstateStringConvert.hasOwnProperty(key.toUpperCase() as string)
+                                ? IEstateStringConvert[key.toUpperCase() as keyof typeof IEstateStringConvert]
+                                : IEstateStringConvert[
+                                    (key.toUpperCase() +
+                                      "." +
+                                      String(value).toUpperCase()) as keyof typeof IEstateStringConvert
+                                  ]}
+                            </div>
+                          );
+                        } else {
+                          return <></>;
+                        }
+                      })
+                    ) : (
+                      <>Not Found</>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </>

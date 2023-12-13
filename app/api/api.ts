@@ -12,134 +12,9 @@ const main_api = axios.create({
 });
 
 const chat_api = axios.create({
-  baseURL: serverIp + chatPort + "/api",
+  baseURL: "http://127.0.0.1:" + chatPort + "/api",
   withCredentials: true,
 });
-
-//need to add type
-
-export interface IUser {
-  id: number;
-  username: string;
-  userId: string;
-  password: string;
-  roleType: "USER" | "ADMIN";
-}
-
-export interface IREQUESTEDEstate {
-  userId: string;
-  roomType:
-    | "STUDIO"
-    | "TWO-THREEROOM"
-    | "OFFICETEL"
-    | "ONE-ROOM"
-    | "EFFICIENCY";
-  rentalType: "MONTHLY" | "JEONSE";
-  deposit: number;
-  monthlyRent: number;
-  maintenanceFee: number;
-  squareFeet: number;
-  contractTerm: string;
-  location: string;
-  floor:
-    | "FIRST"
-    | "SECOND"
-    | "THIRD"
-    | "FOURTH"
-    | "FIFTH"
-    | "SIXTH"
-    | "SEVENTHUPPER"
-    | "TOP"
-    | "UNDER";
-  option: {
-    elevator: boolean;
-    park: boolean;
-    cctv: boolean;
-    doorLock: boolean;
-    pet: boolean;
-    veranda: boolean;
-    range: "INDUCTION" | "GAS" | "FALSE";
-    airConditioner: "TOP" | "WALL" | "STAND" | "FALSE";
-    refrigerator: boolean;
-    sink: boolean;
-    tv: boolean;
-    internet: boolean;
-    bed: boolean;
-    desk: boolean;
-    microwave: boolean;
-    closet: boolean;
-    shoeRack: boolean;
-    bidet: boolean;
-    interphone: boolean;
-    parking: boolean;
-    security: boolean;
-    deilveryBox: boolean;
-    BuildingEntrance: boolean;
-    washingMachine: boolean;
-  };
-  contents: string;
-  images: string[];
-  //this is for requesting estate
-  contractURL?: string;
-}
-
-export interface IACCEPTEDEstate {
-  userId: string;
-  roomType:
-    | "STUDIO"
-    | "TWO-THREEROOM"
-    | "OFFICETEL"
-    | "ONE-ROOM"
-    | "EFFICIENCY";
-  rentalType: "MONTHLY" | "JEONSE";
-  deposit: number;
-  monthlyRent: number;
-  maintenanceFee: number;
-  squareFeet: number;
-  floor:
-    | "FIRST"
-    | "SECOND"
-    | "THIRD"
-    | "FOURTH"
-    | "FIFTH"
-    | "SIXTH"
-    | "SEVENTHUPPER"
-    | "TOP"
-    | "UNDER";
-  option: {
-    elevator: boolean;
-    park: boolean;
-    cctv: boolean;
-    doorLock: boolean;
-    pet: boolean;
-    veranda: boolean;
-    range: "INDUCTION" | "GAS" | "FALSE";
-    airConditioner: "TOP" | "WALL" | "STAND" | "FALSE";
-    refrigerator: boolean;
-    sink: boolean;
-    tv: boolean;
-    internet: boolean;
-    bed: boolean;
-    desk: boolean;
-    microwave: boolean;
-    closet: boolean;
-    shoeRack: boolean;
-    bidet: boolean;
-    interphone: boolean;
-    parking: boolean;
-    security: boolean;
-    deilveryBox: boolean;
-    BuildingEntrance: boolean;
-    washingMachine: boolean;
-  };
-  contents: string;
-  location: string;
-  images: string[];
-  contractTerm: string;
-  //this is for accepted estate
-  id: number;
-  area: "GWANGGYO" | "INGYEDONG" | "UMAN" | "WONCHEON" | "MAETAN";
-}
 
 export const request_apis = {
   post_form: () => main_api.post("/requested/auth/form"),
@@ -151,12 +26,28 @@ export const request_apis = {
 }; //maybe for admin?
 
 export const account_apis = {
-  get: (userdata: IUser) => {
+  auth: (needData?: boolean) => {
+    const refresh = localStorage.getItem("refresh-key");
+    const access = localStorage.getItem("access-key");
     const response = main_api
-      .get("/jwt/auth", { params: userdata, withCredentials: true })
-      .then((res) => res.data)
+      .get("/jwt/auth", {
+        headers: {
+          "x-access-token": access,
+          "x-refresh-token": refresh,
+        },
+        withCredentials: true,
+      })
+      .then((res) => {
+        if (needData) return res.data;
+        return true;
+      })
       .catch((err) => {
-        return err.statusCode;
+        console.log("auth : ", err);
+        if (err.response.status === 401) {
+          account_apis.get_token();
+          return err.errorCode;
+        }
+        return false;
       });
     return response;
   },
@@ -177,8 +68,8 @@ export const account_apis = {
         return res.status;
       })
       .catch((err) => {
-        console.log(err);
-        return err.status;
+        console.log("get_token : ", err);
+        return err.response.status;
       });
     return response;
   },
@@ -217,16 +108,14 @@ export const account_apis = {
     return response;
   },
   mail_send: (input: string) => {
-    const response = main_api
-      .post("/email/no-auth/send-email", { email: input })
-      .then((res) => {
-        return res.data;
-      });
+    const response = main_api.post("/email/no-auth/send-email", { email: input }).then((res) => {
+      return res.data;
+    });
     return response;
   },
-  get_member: (input: any) => {
+  get_member: (input: number) => {
     const response = main_api
-      .get(`/member/auth/${input?.userId}`, { withCredentials: true })
+      .get(`/member/no-auth/${input}`, { withCredentials: true })
       .then((res) => res.data)
       .catch((err) => {
         return err.statusCode;
@@ -304,11 +193,20 @@ export const wishlist_apis = {
 };
 
 export const chat_apis = {
-  createRoom: (input: any) => {
+  createRoom: (input: ICreateChatRoom) => {
+    const access = localStorage.getItem("access-key");
     const response = chat_api
-      .post("/chatroom", input, { withCredentials: true })
+      .post("/chatroom", input, {
+        headers: {
+          "x-access-token": access,
+        },
+        withCredentials: true,
+      })
       .then((res) => res.data)
       .catch((err) => {
+        if (err.statusCode === 401) {
+          account_apis.get_token().then(() => chat_apis.createRoom(input));
+        }
         return err.statusCode;
       });
     return response;
@@ -320,7 +218,12 @@ export const chat_apis = {
         headers: { "x-access-token": token },
         withCredentials: true,
       })
-      .then((res) => res.data)
+      .then((res) => {
+        const roomArray = res.data.map((item: any) => {
+          return item._doc;
+        });
+        return roomArray;
+      })
       .catch((err) => {
         if (err.response?.status === 401) {
           // localStorage.removeItem("access-key");
@@ -353,6 +256,14 @@ interface IWishList {
   maintenanceFee: number;
   squareFeet: number;
   location: string;
+}
+
+interface ICreateChatRoom {
+  name: string;
+  seller_id: number;
+  seller_nickname: string;
+  buyer_nickname: string;
+  estate_id: number;
 }
 
 // {

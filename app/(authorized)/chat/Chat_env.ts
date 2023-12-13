@@ -1,6 +1,10 @@
 export interface IChatRoom {
   fromId: number;
+  fromnickname: string;
   toId: number;
+  tonickname: string;
   lastUpdate: string;
-  chatRoomId: number;
+  chatRoomId: string;
+  estateId: number;
+  name: string;
 }

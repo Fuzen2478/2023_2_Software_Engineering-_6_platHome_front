@@ -90,9 +90,8 @@ function LoginForm() {
                 </div>
               </form>
               <div className="flex w-full justify-evenly">
-                <Link href="/password/find">
-                  <span className="h-7 text-[15px] font-bold text-blue-500 underline">비밀번호 찾기</span>
-                </Link>
+                <span className="h-7 text-[15px] font-bold text-blue-500 underline">비밀번호 찾기</span>
+                <span className="h-7 text-[15px] font-bold text-blue-500 underline">회원가입</span>
               </div>
             </div>
           </ModalBody>

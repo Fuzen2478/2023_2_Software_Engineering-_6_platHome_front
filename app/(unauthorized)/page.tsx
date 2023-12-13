@@ -10,6 +10,7 @@ import { CustomOverlayMap, Map, MapMarker, MarkerClusterer } from "react-kakao-m
 import Search from "../component/board/Search";
 import Filter, { FilterProvider, useFilter } from "../component/Filter";
 import { IFilter } from "../component/Filter/const";
+import { Card, CardBody, CardHeader } from "@nextui-org/react";
 
 export default function Home() {
   return (
@@ -25,6 +26,7 @@ function Container() {
   const [estate, setEstate] = useState<Array<any> | null>(null);
 
   const { filterOption, setFilterOption, showFilter, setShowFilter } = useFilter();
+  const [selectedData, setSelectedData] = useState<any>(null);
 
   const onChangeImage = (e: any) => {
     SendImage("6561ad0a36440fbdec157bb9", 1, "bullshit", e.target.files[0]);
@@ -40,8 +42,8 @@ function Container() {
   }, [filterOption]);
 
   useEffect(() => {
-    console.log("estate data length: ", estate?.length);
-    console.log("estate data: ", estate);
+    // console.log("estate data length: ", estate?.length);
+    // console.log("estate data: ", estate);
   });
 
   return (
@@ -51,10 +53,13 @@ function Container() {
           {typeof estate !== null &&
             estate?.map((item: any) => {
               const position = { lat: Number(item.lng), lng: Number(item.lat) };
-              console.log("position: ", position);
+              // console.log("position: ", position);
               return (
                 <CustomOverlayMap key={item.memberId} position={position}>
-                  <div className="absolute flex -translate-x-1/2 -translate-y-1/2 items-center justify-cetner rounded-full border-2 border-black bg-red-500 w-[1.5rem] h-[1.5rem]">
+                  <div
+                    className="absolute flex -translate-x-1/2 -translate-y-1/2 items-center justify-cetner rounded-full border-2 border-black bg-red-500 w-[1.5rem] h-[1.5rem]"
+                    onClick={() => setSelectedData(item)}
+                  >
                     {" "}
                   </div>
                 </CustomOverlayMap>
@@ -75,7 +80,7 @@ function Container() {
           {
             e.preventDefault();
             const res = await account_apis.get_token();
-            console.log("res: ", res);
+            // console.log("res: ", res);
           }
         }
       >
@@ -84,12 +89,45 @@ function Container() {
       <div
         className="absolute top-28 right-32 z-50 rounded-lg bg-black text-white w-fit py-1 px-2"
         onClick={() => {
-          localStorage.removeItem("access-key");
-          localStorage.removeItem("refresh-key");
+          chat_apis.createRoom({
+            name: "테스트",
+            seller_id: 1,
+            seller_nickname: "tt",
+            buyer_nickname: "fuzen",
+            estate_id: 1,
+          });
         }}
       >
-        토큰 비우기
+        채팅방 생성
       </div>
+      {selectedData !== null && (
+        <Card
+          className="absolute bottom-4 right-4 z-50 rounded-lg border-2 border-primary bg-slate-100 py-2 px-4 content-start cursor-pointer"
+          // onPress={() => {
+          //   console.log("?");
+          //   router.push(`/board/${selectedData.estateId}`);
+          // }}
+        >
+          <CardHeader>{selectedData.location}</CardHeader>
+          <CardBody
+            onClick={() => {
+              router.push(`/board/${selectedData.estateId}`);
+            }}
+          >
+            <div className="flex gap-x-4">
+              <div className="flex flex-col gap-y-2 content-start">
+                <p>{selectedData.rentalType}</p>
+                <p>{selectedData.roomType}</p>
+                <p>{selectedData.deposit}</p>
+                <p>{selectedData.monthlyRent}</p>
+                <p>{selectedData.floor}</p>
+                <p>{selectedData.squareFeet}</p>
+                <p>{selectedData.maintenanceFee}</p>
+              </div>
+            </div>
+          </CardBody>
+        </Card>
+      )}
       <Filter />
     </div>
   );
