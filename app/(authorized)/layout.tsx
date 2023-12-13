@@ -8,10 +8,10 @@ export default function AutenticationLayout({
 }) {
   if (typeof window !== "undefined") {
     const accessKey = localStorage.getItem("access-key");
-    if (accessKey) {
-      return <SocketProvider>{children}</SocketProvider>;
-    } else {
+    if (accessKey === undefined) {
       return <></>;
+    } else {
+      return { children };
     }
   }
 }

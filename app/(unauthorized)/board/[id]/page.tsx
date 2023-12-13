@@ -1,6 +1,11 @@
 "use client";
 
-import { account_apis, chat_apis, estate_apis } from "@/app/api/api";
+import {
+  account_apis,
+  chat_apis,
+  estate_apis,
+  wishlist_apis,
+} from "@/app/api/api";
 import { IEstateStringConvert } from "@/app/component/interface";
 import { MessageCircleIcon, Star } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
@@ -45,14 +50,28 @@ export default function Home() {
           {data?.memberId !== undefined && (
             <div className="px-8 py-4 border-4 bg-white border-black grow rounded-3xl flex gap-x-16 w-full">
               <div className="flex flex-col gap-y-4 basis-1/2 border">
-                <img className="w-full rounded-2xl" src={data?.thumbNailUrl} alt="houseImage" />
+                <img
+                  className="w-full rounded-2xl"
+                  src={data?.thumbNailUrl}
+                  alt="houseImage"
+                />
                 <div className="flex gap-x-4">
-                  <Star size={32} />
+                  <Star
+                    size={32}
+                    onClick={() => {
+                      const res = wishlist_apis.add_wishlist(data.estateId);
+                    }}
+                    className={true ? "text-yellow-400" : ""}
+                  />
                   <MessageCircleIcon
                     size={32}
                     onClick={async () => {
-                      const oppo: object = await account_apis.get_member(data.memberId).then((res) => res);
-                      const my: object = await account_apis.auth(true).then((res) => res);
+                      const oppo: any = await account_apis
+                        .get_member(data.memberId)
+                        .then((res) => res);
+                      const my: any = await account_apis
+                        .auth(true)
+                        .then((res) => res);
                       chat_apis.createRoom({
                         name: data.location,
                         seller_id: data.memberId,
@@ -84,26 +103,34 @@ export default function Home() {
                       {data?.area}
                     </div>
                     {data !== undefined ? (
-                      Object.entries(data.option).map(([key, value]: [string, any]) => {
-                        if (value !== false && value !== "false") {
-                          return (
-                            <div
-                              key={`${id}-${key}`}
-                              className="bg-primary rounded-2xl text-white px-4 py-2 max-h-8 w-fit flex justify-center items-center"
-                            >
-                              {IEstateStringConvert.hasOwnProperty(key.toUpperCase() as string)
-                                ? IEstateStringConvert[key.toUpperCase() as keyof typeof IEstateStringConvert]
-                                : IEstateStringConvert[
-                                    (key.toUpperCase() +
-                                      "." +
-                                      String(value).toUpperCase()) as keyof typeof IEstateStringConvert
-                                  ]}
-                            </div>
-                          );
-                        } else {
-                          return <></>;
+                      Object.entries(data.option).map(
+                        ([key, value]: [string, any]) => {
+                          if (value !== false && value !== "false") {
+                            return (
+                              <div
+                                key={`${id}-${key}`}
+                                className="bg-primary rounded-2xl text-white px-4 py-2 max-h-8 w-fit flex justify-center items-center"
+                              >
+                                {IEstateStringConvert.hasOwnProperty(
+                                  key.toUpperCase() as string
+                                )
+                                  ? IEstateStringConvert[
+                                      key.toUpperCase() as keyof typeof IEstateStringConvert
+                                    ]
+                                  : IEstateStringConvert[
+                                      (key.toUpperCase() +
+                                        "." +
+                                        String(
+                                          value
+                                        ).toUpperCase()) as keyof typeof IEstateStringConvert
+                                    ]}
+                              </div>
+                            );
+                          } else {
+                            return <></>;
+                          }
                         }
-                      })
+                      )
                     ) : (
                       <>Not Found</>
                     )}

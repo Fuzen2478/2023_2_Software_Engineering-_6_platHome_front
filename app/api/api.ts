@@ -2,9 +2,9 @@ import axios from "axios";
 import { ZodError, z } from "zod";
 import { IFilter } from "../component/Filter/const";
 
-const serverIp = process.env.SERVER_URL || "";
-const mainPort = process.env.MAIN_PORT || "";
-const chatPort = process.env.CHAT_PORT || "";
+export const serverIp = process.env.SERVER_URL || "";
+export const mainPort = process.env.MAIN_PORT || "";
+export const chatPort = process.env.CHAT_PORT || "";
 
 const main_api = axios.create({
   baseURL: serverIp + mainPort + "/api",
@@ -12,7 +12,7 @@ const main_api = axios.create({
 });
 
 const chat_api = axios.create({
-  baseURL: "http://127.0.0.1:" + chatPort + "/api",
+  baseURL: serverIp + chatPort + "/api",
   withCredentials: true,
 });
 
@@ -41,11 +41,11 @@ export const account_apis = {
         if (needData) return res.data;
         return true;
       })
-      .catch((err) => {
+      .catch(async (err) => {
         console.log("auth : ", err);
-        if (err.response.status === 401) {
-          account_apis.get_token();
-          return err.errorCode;
+        if (err.errorCode === 401) {
+          await account_apis.get_token();
+          needData ? account_apis.auth(needData) : account_apis.auth();
         }
         return false;
       });
@@ -73,11 +73,21 @@ export const account_apis = {
       });
     return response;
   },
-  logout: (input: any) => {
+  logout: () => {
+    const access = localStorage.getItem("access-key");
     const response = main_api
-      .get("/jwt/auth/logout", { headers: input, withCredentials: true })
+      .get("/jwt/auth/logout", {
+        headers: {
+          "x-access-token": access,
+        },
+        withCredentials: true,
+      })
       .then((res) => res.data)
-      .catch((err) => {
+      .catch(async (err) => {
+        if (err.errorCode === 401) {
+          await account_apis.get_token();
+          account_apis.logout();
+        }
         return err.statusCode;
       });
     return response;
@@ -108,9 +118,11 @@ export const account_apis = {
     return response;
   },
   mail_send: (input: string) => {
-    const response = main_api.post("/email/no-auth/send-email", { email: input }).then((res) => {
-      return res.data;
-    });
+    const response = main_api
+      .post("/email/no-auth/send-email", { email: input })
+      .then((res) => {
+        return res.data;
+      });
     return response;
   },
   get_member: (input: number) => {
@@ -159,7 +171,12 @@ export const estate_apis = {
     const response = main_api
       .post("/estate/auth", input, { withCredentials: true })
       .then((res) => res.data)
-      .catch((err) => {
+      .catch(async (err) => {
+        if (err.errorCode === 401) {
+          await account_apis.get_token();
+          estate_apis.post(input);
+          return 200;
+        }
         return err.statusCode;
       });
     return response;
@@ -168,7 +185,12 @@ export const estate_apis = {
     const response = main_api
       .patch(`/estate/auth/${estateId}`, { withCredentials: true })
       .then((res) => res.data)
-      .catch((err) => {
+      .catch(async (err) => {
+        if (err.errorCode === 401) {
+          await account_apis.get_token();
+          estate_apis.patch(estateId);
+          return 200;
+        }
         return err.statusCode;
       });
     return response;
@@ -179,13 +201,72 @@ export const wishlist_apis = {
   get_wishlist: () => {
     const access = localStorage.getItem("access-key");
     const response = main_api
-      .get("/wish-list/auth", { withCredentials: true })
+      .get("/wish-list/auth", {
+        headers: {
+          "x-access-token": access,
+        },
+        withCredentials: true,
+      })
       .then((res) => {
         console.log(res);
         return res.data;
       })
-      .catch((err) => {
-        console.error(err);
+      .catch(async (err) => {
+        if (err.errorCode === 401) {
+          await account_apis.get_token();
+          wishlist_apis.get_wishlist();
+          return 200;
+        }
+        return err.statusCode;
+      });
+    return response;
+  },
+  add_wishlist: (input: number) => {
+    const access = localStorage.getItem("access-key");
+    const response = main_api
+      .post(
+        "/wish-list/auth/estate/" + input,
+        { estateId: input },
+        {
+          headers: {
+            "x-access-token": access,
+          },
+          withCredentials: true,
+        }
+      )
+      .then((res) => {
+        wishlist_apis.get_wishlist();
+        return res.data;
+      })
+      .catch(async (err) => {
+        if (err.errorCode === 401) {
+          await account_apis.get_token();
+          wishlist_apis.add_wishlist(input);
+          return 200;
+        }
+        return err.statusCode;
+      });
+    return response;
+  },
+  remove_wishlist: (input: number) => {
+    const access = localStorage.getItem("access-key");
+    const response = main_api
+      .delete("/wish-list/auth/" + input, {
+        headers: {
+          "x-access-token": access,
+        },
+        withCredentials: true,
+      })
+      .then((res) => {
+        wishlist_apis.get_wishlist();
+        return res.data;
+      })
+      .catch(async (err) => {
+        if (err.errorCode === 401) {
+          await account_apis.get_token();
+          wishlist_apis.remove_wishlist(input);
+          return 200;
+        }
         return err.statusCode;
       });
     return response;
@@ -203,9 +284,10 @@ export const chat_apis = {
         withCredentials: true,
       })
       .then((res) => res.data)
-      .catch((err) => {
-        if (err.statusCode === 401) {
-          account_apis.get_token().then(() => chat_apis.createRoom(input));
+      .catch(async (err) => {
+        if (err.response?.status === 401) {
+          await account_apis.get_token();
+          chat_apis.createRoom(input);
         }
         return err.statusCode;
       });
@@ -224,23 +306,31 @@ export const chat_apis = {
         });
         return roomArray;
       })
-      .catch((err) => {
-        if (err.response?.status === 401) {
-          // localStorage.removeItem("access-key");
-          // localStorage.removeItem("refresh-key");
-          // account_apis.get_token().then(() => window.location.reload());
+      .catch(async (err) => {
+        if (err.errorCode === 401) {
+          await account_apis.get_token();
+          chat_apis.getRoom();
         }
         return err.statusCode;
       });
     return response;
   },
   uploadImage: (image: { file: string; type: string }) => {
+    const access = localStorage.getItem("access-key");
     const response = chat_api
       .post("/upload", image, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "x-access-token": access,
+        },
       })
       .then((res) => res.data)
-      .catch((err) => {
+      .catch(async (err) => {
+        if (err.errorCode === 401) {
+          await account_apis.get_token();
+          chat_apis.uploadImage(image);
+          return 200;
+        }
         return err.statusCode;
       });
     return response;

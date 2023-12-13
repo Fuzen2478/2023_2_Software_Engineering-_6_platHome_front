@@ -15,30 +15,6 @@ export default function SideBar({ isFold }: { isFold: boolean }) {
     >
       <div onClick={() => router.replace("/")}>지도페이지</div>
       <div onClick={() => router.replace("/board")}>게시판페이지</div>
-      <div
-        onClick={async () => {
-          const res = await account_apis.auth();
-          if (res) {
-            router.replace("/chatlist");
-          } else {
-            setShowLoginForm(true);
-          }
-        }}
-      >
-        채팅 리스트
-      </div>
-      <div
-        onClick={() => async () => {
-          const res = await account_apis.auth();
-          if (res) {
-            router.replace("/myInfo");
-          } else {
-            setShowLoginForm(true);
-          }
-        }}
-      >
-        내 정보
-      </div>
     </div>
   );
 }
@@ -58,8 +34,16 @@ export function useShowSideBar() {
   return context;
 }
 
-export function ShowSideBarProvider({ children }: { children: React.ReactNode }) {
+export function ShowSideBarProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [showSideBar, setShowSideBar] = useState(false);
 
-  return <showSideBarContext.Provider value={{ showSideBar, setShowSideBar }}>{children}</showSideBarContext.Provider>;
+  return (
+    <showSideBarContext.Provider value={{ showSideBar, setShowSideBar }}>
+      {children}
+    </showSideBarContext.Provider>
+  );
 }

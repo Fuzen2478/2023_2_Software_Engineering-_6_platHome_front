@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { IFilter } from "@/app/component/Filter/const";
 import { IEstateStringConvert } from "@/app/component/interface";
 import { Star } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   return (
@@ -34,7 +35,8 @@ function BoardInfo() {
     <>
       {/* TODO: 공지사항 또는 주의사항 알아서 넣기 */}
       <p className="rounded-xl grow bg-gray-300 py-2 px-4 text-center">
-        PlatHome은 양도 매물을 조회하는 플랫폼입니다. 거래를 진행하실 때에는 주의해주세요.
+        PlatHome은 양도 매물을 조회하는 플랫폼입니다. 거래를 진행하실 때에는
+        주의해주세요.
       </p>
       <section className="h-max w-52 bg-white flex items-center gap-5 px-3 py-2 rounded-xl">
         <div className="rounded-md overflow-hidden border border-black w-6 h-6">
@@ -66,13 +68,13 @@ function BoardList({ filter }: { filter: IFilter }) {
     const getWishList = async () => {
       try {
         const res = await wishlist_apis.get_wishlist();
-        // console.log(res);
         setWishlist(res);
       } catch (error) {
         console.error(error);
       }
     };
     getHouseInfo();
+    getWishList();
   }, [filter]);
 
   if (houses === undefined) {
@@ -80,10 +82,12 @@ function BoardList({ filter }: { filter: IFilter }) {
   }
 
   return (
-    <section className="flex flex-wrap gap-x-8 w-full px-8 py-4">
+    <section className="flex flex-wrap gap-x-8 gap-y-4 w-full px-8 py-4">
       {houses.map((item: any) => {
-        const isWish = wishlist?.find((wish) => wish.memberId === item.memberId);
-        return <HousePreview key={item.memberId} house={item} isWish={isWish} />;
+        const isWish = true;
+        return (
+          <HousePreview key={item.memberId} house={item} isWish={isWish} />
+        );
       })}
     </section>
   );
@@ -92,29 +96,53 @@ function BoardList({ filter }: { filter: IFilter }) {
 const TYPE_CLASSNAME = "text-white text-xl rounded-full px-4 py-1.5";
 
 function HousePreview({ house, isWish }: { house: any; isWish: boolean }) {
+  const router = useRouter();
   return (
     // TODO: Link의 href 바꾸기
-    <Link href={`/board/${house.estateId}`} className="w-[28rem]" key={house.memberId}>
+    <div className="w-[28rem]" key={house.memberId}>
       <article className="mx-auto w-[28rem] p-4 flex items-start gap-4 border-2 border-black rounded-xl bg-white font-semibold">
-        <Image className="rounded-lg" src={house.thumbNailUrl ?? ""} alt="thumbnail" width={150} height={150} />
+        <Image
+          className="rounded-lg cursor-pointer"
+          src={house.thumbNailUrl ?? ""}
+          alt="thumbnail"
+          width={150}
+          height={150}
+          onClick={() => {
+            router.push(`/board/${house.estateId}`);
+          }}
+        />
         <section className="flex-grow">
           <div className="flex justify-center gap-8 flex-grow">
-            <div className={TYPE_CLASSNAME + " bg-orange-400"}>{house.roomType}</div>
+            <div className={TYPE_CLASSNAME + " bg-orange-400"}>
+              {house.roomType}
+            </div>
             <div className={TYPE_CLASSNAME + " bg-violet-500"}>
-              {IEstateStringConvert[house.rentalType as keyof typeof IEstateStringConvert]}
+              {
+                IEstateStringConvert[
+                  house.rentalType as keyof typeof IEstateStringConvert
+                ]
+              }
             </div>
             <Star
-              className={"w-8 h-8 " + isWish ? "text-black" : "text-yellow-400"}
+              className={
+                "w-8 h-8 " +
+                (isWish === true ? "text-yellow-400" : "text-black")
+              }
               onClick={() => {
                 if (isWish) {
-                  //wishlist 제거
+                  //wishlist 삭제
+                  wishlist_apis.remove_wishlist(house.estateId);
                 } else {
                   //wishlist 추가
+                  wishlist_apis.add_wishlist(house.estateId);
                 }
               }}
             />
           </div>
-          <section className="text-gray-500 mt-2">
+          <section
+            className="text-gray-500 mt-2 cursor-pointer"
+            onClick={() => router.push(`/board/${house.estateId}`)}
+          >
             <p>
               {house.deposit} / {house.monthly} (관리비 {house.managementFee}만)
             </p>
@@ -127,6 +155,6 @@ function HousePreview({ house, isWish }: { house: any; isWish: boolean }) {
           </section>
         </section>
       </article>
-    </Link>
+    </div>
   );
 }
