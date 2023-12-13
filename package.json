@@ -5,9 +5,9 @@
   "scripts": {
     "dev": "pnpm with-env next dev",
     "build": "pnpm with-env next build",
-    "start": "pnpm with-env next start -p 80",
+    "start": "pnpm with-env next start -p 2000",
     "lint": "dotenv -v SKIP_ENV_VALIDATION=1 next lint",
-    "with-env": "dotenv -e .env"
+    "with-env": "dotenv -e .env --"
   },
   "dependencies": {
     "@nextui-org/react": "^2.2.9",
