@@ -17,7 +17,9 @@ const chat_api = axios.create({
 });
 
 export const request_apis = {
-  post_form: () => main_api.post("/requested/auth/form"),
+  post_form: (input: any) => {
+    main_api.post("/requested/auth/form", input, { withCredentials: true });
+  },
   patch_form: () => main_api.patch("/requested/auth/form"),
   post_file: () => main_api.post("/requested/auth/file"),
   patch_file: () => main_api.patch("/requested/auth/file"),
@@ -110,6 +112,8 @@ export const account_apis = {
       .then((res) => {
         localStorage.setItem("access-key", res.data.accessToken);
         localStorage.setItem("refresh-key", res.data.refreshToken);
+
+        window.location.reload();
         return 200;
       })
       .catch((err) => {
@@ -118,11 +122,9 @@ export const account_apis = {
     return response;
   },
   mail_send: (input: string) => {
-    const response = main_api
-      .post("/email/no-auth/send-email", { email: input })
-      .then((res) => {
-        return res.data;
-      });
+    const response = main_api.post("/email/no-auth/send-email", { email: input }).then((res) => {
+      return res.data;
+    });
     return response;
   },
   get_member: (input: number) => {
@@ -195,6 +197,18 @@ export const estate_apis = {
       });
     return response;
   },
+  getAllMap: () => {
+    const response = main_api
+      .get("/estate/no-auth/map", { withCredentials: true })
+      .then((res) => {
+        return res.data;
+      })
+      .catch((err) => {
+        console.error(err);
+        return err.statusCode;
+      });
+    return response;
+  },
 };
 
 export const wishlist_apis = {
@@ -208,7 +222,6 @@ export const wishlist_apis = {
         withCredentials: true,
       })
       .then((res) => {
-        console.log(res);
         return res.data;
       })
       .catch(async (err) => {
@@ -273,6 +286,33 @@ export const wishlist_apis = {
   },
 };
 
+export const report_apis = {
+  estateReport: (id: number, context: string) => {
+    const access = localStorage.getItem("access-key");
+    const response = main_api
+      .post(
+        "/estate-report/auth",
+        { estateId: id, context: context },
+        {
+          headers: {
+            "x-access-token": access,
+          },
+          withCredentials: true,
+        }
+      )
+      .then((res) => res.data)
+      .catch(async (err) => {
+        if (err.errorCode === 401) {
+          await account_apis.get_token();
+          report_apis.estateReport(id, context);
+          return 200;
+        }
+        return err.statusCode;
+      });
+    return response;
+  },
+};
+
 export const chat_apis = {
   createRoom: (input: ICreateChatRoom) => {
     const access = localStorage.getItem("access-key");
@@ -311,6 +351,7 @@ export const chat_apis = {
           await account_apis.get_token();
           chat_apis.getRoom();
         }
+        console.log(err);
         return err.statusCode;
       });
     return response;

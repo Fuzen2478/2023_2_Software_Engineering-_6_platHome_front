@@ -73,8 +73,7 @@ export const IEstateStringConvert = {
 //userId에 피신고 유저의 Id, reporterId에 신고자의 Id를 기입함.
 
 export interface IREQUESTEDEstate {
-  userId: string;
-  roomType: "STUDIO" | "TWO-THREEROOM" | "OFFICETEL" | "ONE-ROOM" | "EFFICIENCY";
+  roomType: "STUDIO" | "TWO-THREEROOM" | "OFFICETEL" | "APARTMENT";
   rentalType: "MONTHLY" | "JEONSE";
   deposit: number;
   monthlyRent: number;
@@ -109,7 +108,7 @@ export interface IREQUESTEDEstate {
     BuildingEntrance: boolean;
     washingMachine: boolean;
   };
-  contents: string;
+  context: string;
   images: string[];
   //this is for requesting estate
   contractURL?: string;

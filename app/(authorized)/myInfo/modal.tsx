@@ -1,14 +1,22 @@
 "use client";
 
-import { account_apis, wishlist_apis } from "@/app/api/api";
-import { useMyInfo } from "@/app/hook";
-import { Modal, ModalBody, ModalContent } from "@nextui-org/react";
+import { account_apis, estate_apis, wishlist_apis } from "@/app/api/api";
+import { useFilter } from "@/app/component/Filter";
+import { IEstateStringConvert } from "@/app/component/interface";
+import { useMyInfo, useRequestEstate } from "@/app/hook";
+import { Modal, ModalBody, ModalContent, Tooltip } from "@nextui-org/react";
+import { PlusCircle } from "lucide-react";
+import { setRequestMeta } from "next/dist/server/request-meta";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function MyInfoModal() {
   const { showMyInfoModal, setShowMyInfoModal } = useMyInfo();
   const [myData, setMyData] = useState<any>(null);
   const [myWishList, setMyWishList] = useState<any>(null);
+  const [myEstate, setMyEstate] = useState<any>(null);
+  const router = useRouter();
+  const { showRequestEstateModal, setShowRequestEstateModal } = useRequestEstate();
 
   useEffect(() => {
     const fetchMy = async () => {
@@ -21,30 +29,138 @@ export default function MyInfoModal() {
       setMyWishList(res);
     };
 
+    const findMyEstate = async () => {
+      const res = await estate_apis.getAllMap();
+      const result = res?.filter(async (item: any) => {
+        const res = await estate_apis.get(item.estateId);
+        if (res?.memberId === myData?.id) return true;
+      });
+      setMyEstate(result);
+    };
+
     fetchMy();
     fetchWishList();
+    findMyEstate();
   }, []);
 
-  useEffect(() => {
-    console.log("my", myData?.nickname);
-  }, [myData]);
-
-  useEffect(() => {
-    console.log("myWishList", myWishList);
-  }, [myWishList]);
-
   return (
-    <Modal isOpen={showMyInfoModal} onOpenChange={setShowMyInfoModal}>
+    <Modal
+      isOpen={showMyInfoModal}
+      onOpenChange={setShowMyInfoModal}
+      className=" bg-neutral-800 border-4 border-primary-300"
+    >
       <ModalContent>
         <ModalBody className="py-16">
-          <div className="container flex flex-col items-center justify-center bg-white text-black">
-            <p className="pb-8 text-center font-inter text-4xl font-normal">
-              내 정보
-            </p>
+          <div className="container flex flex-col gap-y-6 justify-center text-primary-400 font-bold">
+            <p className="pb-8 text-center font-inter text-4xl font-normal">내 정보</p>
             <p>닉네임 : {myData?.nickname}</p>
             <p>이메일 : {myData?.email}</p>
-            <div className="">
+            <hr />
+
+            <div className="flex gap-x-4">
+              <p>내가 등록한 매물</p>
+              <Tooltip content="매물 등록요청하기">
+                <PlusCircle
+                  size={24}
+                  className="cursor-pointer"
+                  onClick={() => {
+                    setShowRequestEstateModal(true);
+                    setShowMyInfoModal(false);
+                  }}
+                />
+              </Tooltip>
+            </div>
+            {myEstate !== null && myEstate !== undefined && (
+              <>
+                <div className="myEstate">
+                  <div className="w-[22rem]" key={myEstate.memberId}>
+                    <article className="mx-auto w-[22rem] p-4 flex items-start gap-4 border-2 border-black rounded-xl bg-white font-semibold">
+                      <img
+                        className="rounded-lg cursor-pointer"
+                        src={myEstate?.thumbNailUrl ?? ""}
+                        alt="thumbnail"
+                        width={150}
+                        height={150}
+                        onClick={() => {
+                          router.push(`/board/${myEstate.estateId}`);
+                        }}
+                      />
+                      <section className="flex-grow">
+                        <div className="flex justify-center gap-8 flex-grow">
+                          <div className="text-white text-xl rounded-full px-4 py-1.5 bg-orange-400">
+                            {myEstate?.roomType}
+                          </div>
+                          <div className="text-white text-xl rounded-full px-4 py-1.5 bg-violet-500">
+                            {IEstateStringConvert[myEstate.rentalType as keyof typeof IEstateStringConvert]}
+                          </div>
+                        </div>
+                        <section
+                          className="text-gray-500 mt-2 cursor-pointer"
+                          onClick={() => router.push(`/board/${myEstate.estateId}`)}
+                        >
+                          <p>
+                            {myEstate.deposit} / {myEstate.monthly} (관리비 {myEstate.managementFee}만)
+                          </p>
+                          <p>
+                            {myEstate.floor}층 {myEstate.area}m<sup>2</sup>
+                          </p>
+                          <p className="break-words w-60 h-16 overflow-hidden text-clip whitespace-normal truncate">
+                            {myEstate.description}
+                          </p>
+                        </section>
+                      </section>
+                    </article>
+                  </div>
+                </div>
+                <hr />
+              </>
+            )}
+            <div className="wishlist">
               <div>내 위시리스트</div>
+              <div className="flex flex-wrap gap-4">
+                {myWishList?.map((item: any) => {
+                  return (
+                    <div className="w-[22rem]" key={item.memberId}>
+                      <article className="mx-auto w-[22rem] p-4 flex items-start gap-4 border-2 border-black rounded-xl bg-white font-semibold">
+                        <img
+                          className="rounded-lg cursor-pointer"
+                          src={item?.thumbNailUrl ?? ""}
+                          alt="thumbnail"
+                          width={150}
+                          height={150}
+                          onClick={() => {
+                            router.push(`/board/${item.estateId}`);
+                          }}
+                        />
+                        <section className="flex-grow">
+                          <div className="flex justify-center gap-8 flex-grow">
+                            <div className="text-white text-xl rounded-full px-4 py-1.5 bg-orange-400">
+                              {item?.roomType}
+                            </div>
+                            <div className="text-white text-xl rounded-full px-4 py-1.5 bg-violet-500">
+                              {IEstateStringConvert[item.rentalType as keyof typeof IEstateStringConvert]}
+                            </div>
+                          </div>
+                          <section
+                            className="text-gray-500 mt-2 cursor-pointer"
+                            onClick={() => router.push(`/board/${item.estateId}`)}
+                          >
+                            <p>
+                              {item.deposit} / {item.monthly} (관리비 {item.managementFee}만)
+                            </p>
+                            <p>
+                              {item.floor}층 {item.area}m<sup>2</sup>
+                            </p>
+                            <p className="break-words w-60 h-16 overflow-hidden text-clip whitespace-normal truncate">
+                              {item.description}
+                            </p>
+                          </section>
+                        </section>
+                      </article>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </ModalBody>

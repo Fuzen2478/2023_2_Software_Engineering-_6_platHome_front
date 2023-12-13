@@ -1,9 +1,10 @@
 "use client";
 // SignUp.tsx
 
-import { useState } from "react";
+import { createContext, useContext, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { Modal, ModalBody, ModalContent } from "@nextui-org/react";
 
 function SignUp() {
   const [id, setId] = useState("");
@@ -15,6 +16,7 @@ function SignUp() {
   const [isEqual, setIsEqual] = useState(false);
   const [isValid, setIsValid] = useState(false);
   const router = useRouter();
+  const { showSignUp, setShowSignUp } = useShowSignUp();
 
   function postSignUpData() {
     console.log(id, num, password, username);
@@ -29,7 +31,7 @@ function SignUp() {
       .then((response) => {
         console.log(response.data);
         //window.location.href = '/login';
-        router.replace("/login");
+        router.replace("/SignUp");
         // 회원가입 성공 처리
       })
       .catch((error) => {
@@ -116,29 +118,29 @@ function SignUp() {
   };
 
   return (
-    <div>
-      <div className="relative flex justify-center items-center">
-        <div className=" flex flex-col items-center bg-white w-[800px] h-[1000px]">
-          <div className="my-20 w-[800px] px-5">
-            <p className="pb-10 text-center text-[30px] font-bold text-blue-900">회원가입</p>
+    <Modal isOpen={showSignUp} onOpenChange={setShowSignUp} size="xl">
+      <ModalContent className="relative flex justify-center items-center">
+        <ModalBody className=" flex flex-col items-center bg-white w-full h-full">
+          <div className="pt-10 w-full overflow-y-scroll scrollbar-hide">
+            <p className="pb-10 text-center text-[2rem] font-bold text-blue-900">회원가입</p>
             <div className="flex flex-col items-center">
               <div className="mb-10">
                 <form onSubmit={SignFunc}>
-                  <div className="form-control flex flex-col items-centers">
+                  <div className="form-control flex flex-col items-centers w-full">
                     <label className="label pb-3">
                       <span className="label-text text-black">* 이메일</span>
                     </label>
-                    <label className="input-group">
+                    <label className="input-group flex">
                       <input
                         type="text"
                         placeholder="@ajou.ac.kr"
-                        className="input input-bordered flex-1 text-blackinput input-bordered w-[503px] h-[50px] text-black border rounded-xl border-black px-[10px]"
+                        className="input input-bordered flex-1 text-blackinput input-bordered grow h-[3rem] text-black border rounded-xl border-black px-[10px]"
                         value={id}
                         onChange={(event) => setId(event.target.value)}
                       />
                       <span className="px-[5px]">
                         <button
-                          className="btn bg-[#DFD8D8] w-[50px] h-[50px] rounded-xl border border-black text-black"
+                          className="btn bg-[#DFD8D8] w-[3rem] h-[3rem] rounded-xl border border-black text-black"
                           onClick={postEmailCert}
                         >
                           인증
@@ -160,7 +162,7 @@ function SignUp() {
                     <input
                       type="text"
                       placeholder="인증번호"
-                      className="input input-bordered w-[503px] h-[50px] text-black border rounded-xl border-black px-[10px]"
+                      className="input input-bordered w-full h-[3rem] text-black border rounded-xl border-black px-4"
                       value={num}
                       onChange={(event) => setVerifyNum(event.target.value)}
                     />
@@ -182,7 +184,7 @@ function SignUp() {
                           type="text"
                           value={username}
                           onChange={(event) => setUsername(event.target.value)}
-                          className="input input-bordered w-[503px] h-[50px] text-black border rounded-xl border-black px-[10px]"
+                          className="input input-bordered w-full h-[3rem] text-black border rounded-xl border-black px-[10px]"
                         />
                       </div>
                     </div>
@@ -198,7 +200,7 @@ function SignUp() {
                           type={showPassword ? "text" : "password"}
                           value={password}
                           onChange={passwordChange}
-                          className="input input-bordered w-[503px] h-[50px] text-black border rounded-xl border-black px-[10px]"
+                          className="input input-bordered w-full h-[3rem] text-black border rounded-xl border-black px-[10px]"
                         />
                       </div>
                     </div>
@@ -227,7 +229,7 @@ function SignUp() {
                         <input
                           type="password"
                           onChange={(event) => checkPassword(event.target.value)}
-                          className="input input-bordered w-[503px] h-[50px] text-black border rounded-xl border-black px-[10px]"
+                          className="input input-bordered w-full h-[3rem] text-black border rounded-xl border-black px-[10px]"
                         />
                       </div>
                     </div>
@@ -243,7 +245,7 @@ function SignUp() {
                     <button
                       type="submit"
                       onClick={postSignUpData}
-                      className="btn btn-primary w-[503px] h-[61px] bg-[#DFD8D8] rounded-full border border-black text-black"
+                      className="btn btn-primary w-full h-[4rem] bg-[#DFD8D8] rounded-full border border-black text-black"
                     >
                       가입
                     </button>
@@ -252,10 +254,31 @@ function SignUp() {
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+        </ModalBody>
+      </ModalContent>
+    </Modal>
   );
 }
 
 export default SignUp;
+
+interface SignUpContextType {
+  showSignUp: boolean;
+  setShowSignUp: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const showSignUpContext = createContext<SignUpContextType | null>(null);
+
+export function useShowSignUp() {
+  const context = useContext(showSignUpContext);
+  if (!context) {
+    throw new Error("useShowSignUp must be used within a ShowSignUpProvider");
+  }
+  return context;
+}
+
+export function ShowSignUpProvider({ children }: { children: React.ReactNode }) {
+  const [showSignUp, setShowSignUp] = useState(false);
+
+  return <showSignUpContext.Provider value={{ showSignUp, setShowSignUp }}>{children}</showSignUpContext.Provider>;
+}

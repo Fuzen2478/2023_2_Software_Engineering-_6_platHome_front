@@ -1,6 +1,6 @@
 "use client";
 import { estate_apis, wishlist_apis } from "@/app/api/api";
-import { FilterProvider, useFilter } from "@/app/component/Filter";
+import Filter, { FilterProvider, useFilter } from "@/app/component/Filter";
 import Search from "@/app/component/board/Search";
 import Link from "next/link";
 import Image from "next/image";
@@ -35,8 +35,7 @@ function BoardInfo() {
     <>
       {/* TODO: 공지사항 또는 주의사항 알아서 넣기 */}
       <p className="rounded-xl grow bg-gray-300 py-2 px-4 text-center">
-        PlatHome은 양도 매물을 조회하는 플랫폼입니다. 거래를 진행하실 때에는
-        주의해주세요.
+        PlatHome은 양도 매물을 조회하는 플랫폼입니다. 거래를 진행하실 때에는 주의해주세요.
       </p>
       <section className="h-max w-52 bg-white flex items-center gap-5 px-3 py-2 rounded-xl">
         <div className="rounded-md overflow-hidden border border-black w-6 h-6">
@@ -46,6 +45,8 @@ function BoardInfo() {
         양도 매물 게시판
       </section>
       <Search data={{ data: [] }} />
+
+      <Filter />
     </>
   );
 }
@@ -59,7 +60,6 @@ function BoardList({ filter }: { filter: IFilter }) {
     const getHouseInfo = async () => {
       try {
         const res = await estate_apis.get_board(filter);
-        // console.log(res);
         setHouses(res);
       } catch (error) {
         console.error(error);
@@ -68,7 +68,8 @@ function BoardList({ filter }: { filter: IFilter }) {
     const getWishList = async () => {
       try {
         const res = await wishlist_apis.get_wishlist();
-        setWishlist(res);
+        const pro = res.map((item: any) => item.estateId);
+        setWishlist(pro);
       } catch (error) {
         console.error(error);
       }
@@ -84,10 +85,8 @@ function BoardList({ filter }: { filter: IFilter }) {
   return (
     <section className="flex flex-wrap gap-x-8 gap-y-4 w-full px-8 py-4">
       {houses.map((item: any) => {
-        const isWish = true;
-        return (
-          <HousePreview key={item.memberId} house={item} isWish={isWish} />
-        );
+        const isWish = wishlist?.includes(item.estateId) ?? false;
+        return <HousePreview key={item.memberId} house={item} isWish={isWish} />;
       })}
     </section>
   );
@@ -97,6 +96,16 @@ const TYPE_CLASSNAME = "text-white text-xl rounded-full px-4 py-1.5";
 
 function HousePreview({ house, isWish }: { house: any; isWish: boolean }) {
   const router = useRouter();
+  const [estate, setEstate] = useState<any>();
+
+  useEffect(() => {
+    const fetch = async () => {
+      const res = await estate_apis.get(Number(house.estateId));
+      setEstate(res);
+    };
+    fetch();
+  }, []);
+
   return (
     // TODO: Link의 href 바꾸기
     <div className="w-[28rem]" key={house.memberId}>
@@ -114,20 +123,13 @@ function HousePreview({ house, isWish }: { house: any; isWish: boolean }) {
         <section className="flex-grow">
           <div className="flex justify-center gap-8 flex-grow">
             <div className={TYPE_CLASSNAME + " bg-orange-400"}>
-              {house.roomType}
+              {IEstateStringConvert[house.roomType as keyof typeof IEstateStringConvert]}
             </div>
             <div className={TYPE_CLASSNAME + " bg-violet-500"}>
-              {
-                IEstateStringConvert[
-                  house.rentalType as keyof typeof IEstateStringConvert
-                ]
-              }
+              {IEstateStringConvert[house.rentalType as keyof typeof IEstateStringConvert]}
             </div>
             <Star
-              className={
-                "w-8 h-8 " +
-                (isWish === true ? "text-yellow-400" : "text-black")
-              }
+              className={"w-8 h-8 " + (isWish === true ? "text-yellow-400" : "text-black")}
               onClick={() => {
                 if (isWish) {
                   //wishlist 삭제
@@ -144,13 +146,15 @@ function HousePreview({ house, isWish }: { house: any; isWish: boolean }) {
             onClick={() => router.push(`/board/${house.estateId}`)}
           >
             <p>
-              {house.deposit} / {house.monthly} (관리비 {house.managementFee}만)
+              {estate?.deposit?.toLocaleString()} / {estate?.monthlyRent?.toLocaleString()} (관리비{" "}
+              {estate?.maintenanceFee / 10000}만)
             </p>
             <p>
-              {house.floor}층 {house.area}m<sup>2</sup>
+              {IEstateStringConvert[estate?.floor as keyof typeof IEstateStringConvert]} {estate?.squareFeet}m
+              <sup>3</sup>
             </p>
             <p className="break-words w-60 h-16 overflow-hidden text-clip whitespace-normal truncate">
-              {house.description}
+              {estate?.description}
             </p>
           </section>
         </section>

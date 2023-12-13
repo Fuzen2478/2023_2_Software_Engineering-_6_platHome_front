@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { account_apis } from "@/app/api/api";
 import { Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/react";
+import { useShowSignUp } from "./SignUp";
 
 function LoginForm() {
   const [id, setId] = useState("");
@@ -12,6 +13,7 @@ function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const { showLoginForm, setShowLoginForm } = useShowLogin();
+  const { showSignUp, setShowSignUp } = useShowSignUp();
 
   function postLoginData(e: any) {
     e.preventDefault();
@@ -25,13 +27,8 @@ function LoginForm() {
         <ModalContent>
           <ModalBody className="py-16">
             <div className="container flex flex-col items-center justify-center bg-white">
-              <p className="pb-8 text-black text-center font-inter text-4xl font-normal">
-                Log-In
-              </p>
-              <form
-                onSubmit={postLoginData}
-                className="flex flex-col items-center"
-              >
+              <p className="pb-8 text-black text-center font-inter text-4xl font-normal">Log-In</p>
+              <form onSubmit={postLoginData} className="flex flex-col items-center">
                 <div className="form-control py-[10px]">
                   <input
                     type="text"
@@ -52,13 +49,8 @@ function LoginForm() {
                   />
                   <div className="pt-[10px]">
                     <label>
-                      <input
-                        type="checkbox"
-                        onClick={() => setShowPassword(!showPassword)}
-                      />
-                      <span className="text-[15px] text-black pl-[5px]">
-                        비밀번호 보기
-                      </span>
+                      <input type="checkbox" onClick={() => setShowPassword(!showPassword)} />
+                      <span className="text-[15px] text-black pl-[5px]">비밀번호 보기</span>
                     </label>
                   </div>
                 </div>
@@ -74,10 +66,21 @@ function LoginForm() {
                 </div>
               </form>
               <div className="flex w-full justify-evenly">
-                <span className="h-7 text-[15px] font-bold text-blue-500 underline">
-                  비밀번호 찾기
+                <span
+                  className="h-7 text-[15px] font-bold text-blue-500 underline cursor-pointer"
+                  onClick={() => {
+                    alert("비밀번호 재설정 메일이 발송되었습니다.");
+                  }}
+                >
+                  비밀번호 재설정
                 </span>
-                <span className="h-7 text-[15px] font-bold text-blue-500 underline">
+                <span
+                  className="h-7 text-[15px] font-bold text-blue-500 underline cursor-pointer"
+                  onClick={() => {
+                    setShowLoginForm(false);
+                    setShowSignUp(true);
+                  }}
+                >
                   회원가입
                 </span>
               </div>
@@ -109,9 +112,5 @@ export function useShowLogin() {
 export function ShowLoginProvider({ children }: { children: React.ReactNode }) {
   const [showLoginForm, setShowLoginForm] = useState(false);
 
-  return (
-    <showLoginContext.Provider value={{ showLoginForm, setShowLoginForm }}>
-      {children}
-    </showLoginContext.Provider>
-  );
+  return <showLoginContext.Provider value={{ showLoginForm, setShowLoginForm }}>{children}</showLoginContext.Provider>;
 }

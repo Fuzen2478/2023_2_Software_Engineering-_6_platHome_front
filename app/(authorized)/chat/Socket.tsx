@@ -1,14 +1,5 @@
 "use client";
-import {
-  Dispatch,
-  ReactNode,
-  SetStateAction,
-  createContext,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { Dispatch, ReactNode, SetStateAction, createContext, useContext, useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { useDisclosure } from "@nextui-org/react";
 import { chatPort, chat_apis, serverIp } from "@/app/api/api";
@@ -50,69 +41,65 @@ export function SocketProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<IChat[]>([]);
 
   useEffect(() => {
-    chatSocketClient.connect();
+    const access = localStorage.getItem("access-key");
+    if (access) {
+      chatSocketClient.connect();
 
-    const fetchNenter = async () => {
-      const res = await getChatData({ setState });
-      res.map((item: any) => {
-        console.log("enterChatRoom", item._id, item.buyer_id);
-        chatSocketClient.emit("enterChatRoom", {
-          roomId: item._id,
-          userId: item.buyer_id,
+      const fetchNenter = async () => {
+        const res = await getChatData({ setState });
+        res?.map((item: any) => {
+          console.log("enterChatRoom", item._id, item.buyer_id);
+          chatSocketClient.emit("enterChatRoom", {
+            roomId: item._id,
+            userId: item.buyer_id,
+          });
         });
+      };
+      fetchNenter();
+
+      // state.map((item) => {
+      //   chatSocketClient.emit("enterChatRoom", {
+      //     roomId: item._id,
+      //     userId: item.buyer_id,
+      //   });
+      // });
+
+      chatSocketClient.on("chatUpdated", () => {});
+
+      chatSocketClient.on("message", (msg) => {
+        console.log(msg);
       });
-    };
-    fetchNenter();
 
-    // state.map((item) => {
-    //   chatSocketClient.emit("enterChatRoom", {
-    //     roomId: item._id,
-    //     userId: item.buyer_id,
-    //   });
-    // });
+      chatSocketClient.on("connect", () => {
+        console.log("ChatSocket connect");
+      });
 
-    chatSocketClient.on("chatUpdated", () => {});
+      chatSocketClient.on("disconnect", (reason) => {
+        console.log("ChatSocket disconnect");
+        console.log(reason);
+        chatSocketClient.disconnect();
+      });
 
-    chatSocketClient.on("message", (msg) => {
-      console.log(msg);
-    });
+      chatSocketClient.on("connect_error", (error) => {
+        // console.log("connect error");
+        // console.log(error);
+        onOpen();
+      });
 
-    chatSocketClient.on("connect", () => {
-      console.log("ChatSocket connect");
-    });
-
-    chatSocketClient.on("disconnect", (reason) => {
-      console.log("ChatSocket disconnect");
-      console.log(reason);
-      chatSocketClient.disconnect();
-    });
-
-    chatSocketClient.on("connect_error", (error) => {
-      // console.log("connect error");
-      // console.log(error);
-      onOpen();
-    });
-
-    return () => {
-      chatSocketClient.disconnect();
-    };
+      return () => {
+        chatSocketClient.disconnect();
+      };
+    }
   }, []);
 
-  return (
-    <SocketContext.Provider value={state}>{children}</SocketContext.Provider>
-  );
+  return <SocketContext.Provider value={state}>{children}</SocketContext.Provider>;
 }
 
 //chat init function
 
-async function getChatData({
-  setState,
-}: {
-  setState: Dispatch<SetStateAction<IChat[]>>;
-}) {
+async function getChatData({ setState }: { setState: Dispatch<SetStateAction<IChat[]>> }) {
   const data = await chat_apis.getRoom();
-  console.log("getChatData", data);
-  const roomData = data.map((item: any) => {
+  const roomData = data?.map((item: any) => {
     return {
       _id: item._id,
       name: item.name,
@@ -122,42 +109,28 @@ async function getChatData({
       last_chat: {},
     };
   });
-  console.log("chatdata preprocess : ", roomData);
   setState(roomData);
   return roomData;
 }
 
 //emit function
 
-export function sendMessage(
-  roomId: string,
-  userId: number,
-  nickname: string,
-  message: string
-) {
+export function sendMessage(roomId: string, userId: number, nickname: string, message: string) {
   chatSocketClient.emit("sendMessage", {
     roomId: roomId,
     userId: userId,
     nickname: nickname,
     message: message,
   });
-  console.log("sendMessage", roomId, userId, nickname, message);
 }
 
 async function uploadFile(input: any) {
-  const extension = input.name
-    .split(".")
-    .filter((v: string) => v === "jpeg" || "jpg" || "heic");
+  const extension = input.name.split(".").filter((v: string) => v === "jpeg" || "jpg" || "heic");
   const result = await chat_apis.uploadImage({ file: input, type: extension });
   return result.data;
 }
 
-export function SendImage(
-  roomId: string,
-  userId: number,
-  nickname: string,
-  image: any
-) {
+export function SendImage(roomId: string, userId: number, nickname: string, image: any) {
   const data = uploadFile(image);
   chatSocketClient.emit("sendImage", {
     roomId: roomId,

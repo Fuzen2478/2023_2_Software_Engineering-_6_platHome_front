@@ -10,7 +10,8 @@ import { CustomOverlayMap, Map, MapMarker, MarkerClusterer } from "react-kakao-m
 import Search from "../component/board/Search";
 import Filter, { FilterProvider, useFilter } from "../component/Filter";
 import { IFilter } from "../component/Filter/const";
-import { Card, CardBody, CardHeader } from "@nextui-org/react";
+import { Card, CardBody, CardHeader, Chip } from "@nextui-org/react";
+import { IEstateStringConvert } from "../component/interface";
 
 export default function Home() {
   return (
@@ -27,10 +28,15 @@ function Container() {
 
   const { filterOption, setFilterOption, showFilter, setShowFilter } = useFilter();
   const [selectedData, setSelectedData] = useState<any>(null);
+  const [clusteredData, setClusteredData] = useState<{ id: number; location: string }[]>();
 
-  const onChangeImage = (e: any) => {
-    SendImage("6561ad0a36440fbdec157bb9", 1, "bullshit", e.target.files[0]);
-    chat_apis.uploadImage(e.target.files[0]);
+  const clusterClick = (_target: any, cluster: any) => {
+    let temp: any[] = [];
+    cluster._markers.map((item: any) => {
+      const t = item.a.innerText.split(", ");
+      temp.push({ id: Number(t[0]), location: t[1] });
+    });
+    setClusteredData(temp);
   };
 
   useEffect(() => {
@@ -41,26 +47,25 @@ function Container() {
     fetchData(filterOption);
   }, [filterOption]);
 
-  useEffect(() => {
-    // console.log("estate data length: ", estate?.length);
-    // console.log("estate data: ", estate);
-  });
-
   return (
     <div className="main-content max-h-[calc(100vh-5rem)] max-w-[100vw]">
       <Map center={{ lat: 37.279516, lng: 127.042636 }} style={{ width: "100%", height: "calc(100vh - 4rem)" }}>
-        <MarkerClusterer averageCenter minLevel={1} disableClickZoom>
+        <MarkerClusterer averageCenter minLevel={1} disableClickZoom onClusterclick={clusterClick}>
           {typeof estate !== null &&
             estate?.map((item: any) => {
               const position = { lat: Number(item.lng), lng: Number(item.lat) };
-              // console.log("position: ", position);
               return (
                 <CustomOverlayMap key={item.memberId} position={position}>
                   <div
-                    className="absolute flex -translate-x-1/2 -translate-y-1/2 items-center justify-cetner rounded-full border-2 border-black bg-red-500 w-[1.5rem] h-[1.5rem]"
-                    onClick={() => setSelectedData(item)}
+                    className="absolute flex -translate-x-1/2 -translate-y-1/2 items-center justify-cetner rounded-full border-2 border-black bg-red-500 w-[1.5rem] h-[1.5rem] cursor-pointer"
+                    onClick={() => {
+                      setSelectedData(item);
+                    }}
                   >
                     {" "}
+                  </div>
+                  <div className="identify hidden">
+                    {item.estateId}, {item.location}
                   </div>
                 </CustomOverlayMap>
               );
@@ -68,19 +73,12 @@ function Container() {
         </MarkerClusterer>
       </Map>
       <Search data={{ data: [] }} className="absolute top-20 z-50 -right-3" />
-      <div
+      {/* <div
         className="absolute top-28 right-0 z-50 rounded-lg bg-black text-white w-fit py-1 px-2"
         onClick={async (e) =>
-          // sendMessage(
-          //   "6564384908a74320c964fbab",
-          //   5,
-          //   "fuzen",
-          //   "메세지 잘 가나요?"
-          // )
           {
             e.preventDefault();
             const res = await account_apis.get_token();
-            // console.log("res: ", res);
           }
         }
       >
@@ -99,14 +97,14 @@ function Container() {
         }}
       >
         채팅방 생성
-      </div>
+      </div> */}
+      {/* 선택된 매물 */}
       {selectedData !== null && (
         <Card
-          className="absolute bottom-4 right-4 z-50 rounded-lg border-2 border-primary bg-slate-100 py-2 px-4 content-start cursor-pointer"
-          // onPress={() => {
-          //   console.log("?");
-          //   router.push(`/board/${selectedData.estateId}`);
-          // }}
+          className="absolute bottom-4 right-4 z-50 rounded-lg border-2 border-primary bg-slate-100 py-2 px-4 content-start cursor-pointer font-bold"
+          onPress={() => {
+            router.push(`/board/${selectedData.estateId}`);
+          }}
         >
           <CardHeader>{selectedData.location}</CardHeader>
           <CardBody
@@ -115,14 +113,39 @@ function Container() {
             }}
           >
             <div className="flex gap-x-4">
-              <div className="flex flex-col gap-y-2 content-start">
-                <p>{selectedData.rentalType}</p>
-                <p>{selectedData.roomType}</p>
-                <p>{selectedData.deposit}</p>
-                <p>{selectedData.monthlyRent}</p>
-                <p>{selectedData.floor}</p>
-                <p>{selectedData.squareFeet}</p>
-                <p>{selectedData.maintenanceFee}</p>
+              <div className="flex flex-col gap-y-2 content-start font-bold">
+                <Chip>{IEstateStringConvert[selectedData.rentalType as keyof typeof IEstateStringConvert]}</Chip>
+                <Chip>{IEstateStringConvert[selectedData.roomType as keyof typeof IEstateStringConvert]}</Chip>
+                <Chip>보증금 : {selectedData.deposit.toLocaleString()}</Chip>
+                <Chip>월세 : {selectedData.monthlyRent.toLocaleString()}</Chip>
+                <Chip>{IEstateStringConvert[selectedData.floor as keyof typeof IEstateStringConvert]}</Chip>
+                <Chip>{selectedData.squareFeet} 평</Chip>
+                <Chip>관리비 : {selectedData.maintenanceFee.toLocaleString()}</Chip>
+              </div>
+              <img src={selectedData.thumbnailUrl} />
+            </div>
+          </CardBody>
+        </Card>
+      )}
+      {/* 겹쳐진 매물 */}
+      {clusteredData !== undefined && (
+        <Card className="absolute bottom-4 right-4 z-40 rounded-lg border-2 border-primary bg-slate-100 py-2 px-4 content-start cursor-pointer font-bold">
+          <CardBody>
+            <div className="flex gap-x-4">
+              <div className="flex flex-col gap-y-2 content-start font-bold">
+                {clusteredData.map((item) => {
+                  return (
+                    <Chip
+                      onClick={() => {
+                        const temp = estate?.filter((estate) => estate.estateId === item.id);
+                        if (temp === undefined) return false;
+                        setSelectedData(temp[0]);
+                      }}
+                    >
+                      {item.location}
+                    </Chip>
+                  );
+                })}
               </div>
             </div>
           </CardBody>
@@ -132,36 +155,3 @@ function Container() {
     </div>
   );
 }
-
-{
-  /* <input
-        type="file"
-        accept={"image/jpeg" || "image/HEIC" || "image/jpg"}
-        onChange={(e) => onChangeImage(e)}
-      /> */
-}
-
-// enterChatRoom //  {
-//   roomId: string;
-// };
-
-// sendMessage //  {
-//   userId: number;
-//   roomId: string;
-//   nickname: string;
-//   message: string;
-// };
-
-// sendImage //  {
-//   userId: number;
-//   roomId: string;
-//   nickname: string;
-//   message: string;
-// };
-
-// exitChatRoom // {
-//   roomId: string;
-//   userId: number;
-//   nickname: string;
-//   userType: UserType;
-// };
