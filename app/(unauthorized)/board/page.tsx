@@ -109,9 +109,9 @@ function HousePreview({ house, isWish }: { house: any; isWish: boolean }) {
   return (
     // TODO: Link의 href 바꾸기
     <div className="w-[28rem]" key={house.memberId}>
-      <article className="mx-auto w-[28rem] p-4 flex items-start gap-4 border-2 border-black rounded-xl bg-white font-semibold">
-        <Image
-          className="rounded-lg cursor-pointer"
+      <article className="mx-auto w-[28rem] max-h-[11rem] p-4 flex items-start gap-4 border-2 border-black rounded-xl bg-white font-semibold">
+        <img
+          className="rounded-lg cursor-pointer max-h-[9rem]"
           src={house.thumbNailUrl ?? ""}
           alt="thumbnail"
           width={150}
