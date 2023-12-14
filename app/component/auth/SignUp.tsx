@@ -20,13 +20,44 @@ function SignUp() {
   const { showSignUp, setShowSignUp } = useShowSignUp();
 
   function postSignUpData() {
+    //check
+    if (id == "") {
+      alert("이메일을 입력해주세요.");
+      return false;
+    }
+    if (num == "") {
+      alert("인증번호를 입력해주세요.");
+      return false;
+    }
+    if (username == "") {
+      alert("유저네임을 입력해주세요.");
+      return false;
+    }
+    if (password == "") {
+      alert("비밀번호를 입력해주세요.");
+      return false;
+    }
+    if (passwordCheck == "") {
+      alert("비밀번호 확인을 입력해주세요.");
+      return false;
+    }
+    if (!isEqual) {
+      alert("비밀번호가 일치하지 않습니다.");
+      return false;
+    }
+    if (!isValid) {
+      alert("비밀번호가 형식에 맞지 않습니다.");
+      return false;
+    }
     const res = account_apis.signup({ authCode: num, nickname: username, email: id, password: password });
     setShowSignUp(false);
     return res;
   }
 
   function postEmailCert() {
-    return account_apis.mail_send(id);
+    return account_apis.mail_send(id).then((res) => {
+      return res;
+    });
   }
 
   const validatePassword = (password: any) => {
@@ -66,12 +97,7 @@ function SignUp() {
             <p className="pb-10 text-center text-[2rem] font-bold text-blue-900">회원가입</p>
             <div className="flex flex-col items-center">
               <div className="mb-10">
-                <form
-                  action={postSignUpData}
-                  onSubmit={() => {
-                    return false;
-                  }}
-                >
+                <form action={postSignUpData} onSubmit={postSignUpData}>
                   <div className="form-control flex flex-col items-centers w-full">
                     <label className="label pb-3">
                       <span className="label-text text-black">* 이메일</span>
