@@ -35,6 +35,7 @@ export default function MyInfoModal() {
         const res = await estate_apis.get(item.estateId);
         if (res?.memberId === myData?.id) return true;
       });
+      console.log(result);
       setMyEstate(result);
     };
 

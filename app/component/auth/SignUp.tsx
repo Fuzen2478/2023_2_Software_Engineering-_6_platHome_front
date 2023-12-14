@@ -5,6 +5,7 @@ import { createContext, useContext, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { Modal, ModalBody, ModalContent } from "@nextui-org/react";
+import { account_apis } from "@/app/api/api";
 
 function SignUp() {
   const [id, setId] = useState("");
@@ -19,72 +20,16 @@ function SignUp() {
   const { showSignUp, setShowSignUp } = useShowSignUp();
 
   function postSignUpData() {
-    console.log(id, num, password, username);
-    return axios
-      .post("http://49.162.4.3:8080/api/jwt/no-auth/sign-up", {
-        authCode: num,
-        nickname: username,
-        email: username,
-        password,
-        withCredentials: true,
-      })
-      .then((response) => {
-        console.log(response.data);
-        //window.location.href = '/login';
-        router.replace("/SignUp");
-        // 회원가입 성공 처리
-      })
-      .catch((error) => {
-        alert("가입에 실패했습니다. 입력한 내용을 다시 확인해 주세요.");
-        console.error(error);
-        // 회원가입 실패 처리
-      });
+    const res = account_apis.signup({ authCode: num, nickname: username, email: id, password: password });
+    setShowSignUp(false);
+    return res;
   }
 
   function postEmailCert() {
-    return axios
-      .post(
-        "http://49.162.4.3:8080/api/email/no-auth/send-email",
-        {
-          userId: id,
-        },
-        { withCredentials: true }
-      )
-      .then((response) => {
-        return axios
-          .post(
-            "http://49.162.4.3:8080/api/email/no-auth/send-email",
-            {
-              userId: id,
-            },
-            { withCredentials: true }
-          )
-          .then((response) => {
-            alert("입력하신 이메일로 인증번호가 전송되었습니다.");
-            console.log(response.data);
-            setId("");
-            // 이메일 인증 성공 처리
-          })
-          .catch((error) => {
-            alert("인증코드 전송에 실패하였습니다.");
-            console.error(error);
-            // 이메일 인증 실패 처리
-          });
-      })
-      .catch((error) => {
-        alert("이미 가입된 이메일입니다.");
-        console.error(error);
-        console.log("123");
-        // 이메일 인증 실패 처리
-      });
+    return account_apis.mail_send(id);
   }
 
-  const SignFunc = (e: { preventDefault: () => void }) => {
-    e.preventDefault();
-  };
-
   const validatePassword = (password: any) => {
-    console.log("test : ", password);
     if (password.length <= 8) {
       setIsValid(false);
     } else if (!/[a-zA-Z]/.test(password)) {
@@ -100,15 +45,11 @@ function SignUp() {
     const pwvalue = event.target.value;
     setPassword(pwvalue);
 
-    console.log("password : ", pwvalue);
     validatePassword(pwvalue);
   };
 
   const checkPassword = (passwordCheck: any) => {
-    console.log("check : ", passwordCheck);
-    console.log("check2 : ", password);
     if (passwordCheck.length == 0) {
-      console.log("false");
       setIsEqual(false);
     } else if (password != passwordCheck) {
       setIsEqual(false);
@@ -125,7 +66,12 @@ function SignUp() {
             <p className="pb-10 text-center text-[2rem] font-bold text-blue-900">회원가입</p>
             <div className="flex flex-col items-center">
               <div className="mb-10">
-                <form onSubmit={SignFunc}>
+                <form
+                  action={postSignUpData}
+                  onSubmit={() => {
+                    return false;
+                  }}
+                >
                   <div className="form-control flex flex-col items-centers w-full">
                     <label className="label pb-3">
                       <span className="label-text text-black">* 이메일</span>
